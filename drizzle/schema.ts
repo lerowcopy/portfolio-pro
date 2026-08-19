@@ -1,4 +1,5 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { index, int, json, mysqlEnum, mysqlTable, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
+import type { SocialPlatform } from "../shared/portfolio";
 
 /**
  * Core user table backing auth flow.
@@ -25,4 +26,35 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+export const portfolioTemplates = ["minimal", "gallery", "cards", "blog"] as const;
+export const portfolioColorSchemes = ["blue", "dark", "purple", "green"] as const;
+export const portfolioFontFamilies = ["inter", "playfair", "georgia"] as const;
+
+export type StoredSocialLink = { id: string; platform: SocialPlatform; url: string };
+
+/** User-owned publishable portfolio. All URL and visual state is stored separately from file bytes. */
+export const portfolios = mysqlTable("portfolios", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 120 }).notNull(),
+  bio: text("bio").notNull(),
+  logoUrl: varchar("logoUrl", { length: 1000 }),
+  avatarUrl: varchar("avatarUrl", { length: 1000 }),
+  socialLinks: json("socialLinks").$type<StoredSocialLink[]>().notNull(),
+  template: mysqlEnum("template", portfolioTemplates).notNull().default("minimal"),
+  colorScheme: mysqlEnum("colorScheme", portfolioColorSchemes).notNull().default("blue"),
+  fontFamily: mysqlEnum("fontFamily", portfolioFontFamilies).notNull().default("inter"),
+  isPublished: int("isPublished").notNull().default(0),
+  publishedAt: timestamp("publishedAt"),
+  slug: varchar("slug", { length: 50 }).notNull(),
+  slugManuallyEdited: int("slugManuallyEdited").notNull().default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [
+  uniqueIndex("portfolios_slug_unique").on(table.slug),
+  index("portfolios_owner_updated_idx").on(table.userId, table.updatedAt),
+  index("portfolios_public_slug_idx").on(table.isPublished, table.slug),
+]);
+
+export type Portfolio = typeof portfolios.$inferSelect;
+export type InsertPortfolio = typeof portfolios.$inferInsert;

@@ -4,14 +4,20 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import LandingPage from "./pages/LandingPage";
+import PortfolioEditorPage from "./pages/PortfolioEditorPage";
+import PublicPortfolioPage from "./pages/PublicPortfolioPage";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
+      <Route path={"/"} component={LandingPage} />
+      <Route path={"/dashboard"} component={Dashboard} />
+      <Route path={"/dashboard/portfolios/:id/edit"} component={PortfolioEditorPage} />
       <Route path={"/404"} component={NotFound} />
+      <Route path={"/:slug"} component={PublicPortfolioPage} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
@@ -28,7 +34,7 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider
         defaultTheme="light"
-        // switchable
+        switchable
       >
         <TooltipProvider>
           <Toaster />

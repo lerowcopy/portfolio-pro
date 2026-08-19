@@ -175,3 +175,18 @@
     }
   }
 }
+@theme inline {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "DM Serif Display", Georgia, serif;
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { scroll-behavior: smooth; }
+  body { @apply bg-background text-foreground antialiased; font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif; }
+  button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  * { scroll-behavior: smooth; }
+}
