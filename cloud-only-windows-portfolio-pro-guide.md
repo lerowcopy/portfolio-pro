@@ -41,15 +41,21 @@ Vercel (Next.js App Router, Preview и Production deployments)
 
 Сохраните database password Supabase, Supabase service-role key, FreeKassa API key, оба Secret Word и Resend API key в password manager. **Никогда** не публикуйте их в GitHub issue, commit, screenshot, чат или browser environment variable.
 
-## 3. Шаг 1 — создать GitHub repository и первый Vercel deployment
+## 3. Шаг 1 — подключить существующий GitHub repository к Vercel
 
-1. Откройте [Vercel Dashboard](https://vercel.com/dashboard) и войдите через GitHub.
-2. Нажмите **Add New → Project**.
-3. В блоке **Clone Template** выберите официальный **Next.js** starter. Это создаст GitHub repository без терминала. Supabase описывает данный dashboard flow как способ создать GitHub repo, commit и deploy, не покидая Vercel. [3]
-4. В поле repository name укажите `portfolio-pro`.
-5. Выберите **Private** repository.
-6. Нажмите **Create**, затем **Deploy**.
+> **Для этого проекта репозиторий `portfolio-pro` уже создан.** Не используйте **Clone Template** и не пытайтесь повторно создать repository с тем же именем: GitHub корректно вернёт ошибку `A repository named "portfolio-pro" already exists`. Вместо этого импортируйте существующий private repository в Vercel.
+
+1. Откройте GitHub и убедитесь, что repository `portfolio-pro` существует в вашем account и имеет статус **Private**.
+2. Откройте [Vercel Dashboard](https://vercel.com/dashboard) и войдите через тот же GitHub account.
+3. Нажмите **Add New → Project**.
+4. В разделе **Import Git Repository** найдите `portfolio-pro` и нажмите **Import**. Не выбирайте **Clone Template**.
+5. Проверьте, что Vercel распознал Framework Preset как **Next.js**.
+6. Нажмите **Deploy**.
 7. После успешного deploy откройте **Go to Dashboard**. Сохраните адрес наподобие `https://portfolio-pro-<scope>.vercel.app` — это временный production URL.
+
+Если `portfolio-pro` не появляется в списке Vercel, откройте **Add GitHub Account** или **Configure GitHub App** на том же экране и предоставьте Vercel доступ именно к этому repository. После выдачи доступа обновите список и нажмите **Import**.
+
+Если вам намеренно нужен второй независимый проект, создайте новый private repository с уникальным именем, например `portfolio-pro-next` или `portfolio-pro-external`. Для текущего проекта этого делать не нужно.
 
 > Vercel автоматически создаёт Preview Deployment для каждого push и pull request; push в production branch `main` обновляет production deployment. [2]
 

@@ -30,6 +30,7 @@
 - [ ] Prepare YooKassa migration package for Next.js 14: SDK, checkout, subscriptions, webhook and pricing UI
 - [x] Verify and finalize the FreeKassa migration package for Next.js 14 and Prisma: checkout, subscriptions, callback validation and webhook replacement
 - [x] Update the browser-only Windows setup guide from Stripe to FreeKassa checkout, callback, recurring and testing flow
+- [x] Correct the Windows guide so an existing GitHub repository is reused instead of recreated with a duplicate name
 - [x] Add normalized portfolio_projects schema with title, description, images, URL, tags, dates, sort order, and portfolio ownership
 - [x] Add server-side project CRUD, image upload, and reorder procedures with ownership and file validation
 - [x] Add project list route with search, pagination, optimistic delete, and reorder controls
