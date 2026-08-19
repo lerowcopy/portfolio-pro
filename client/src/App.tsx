@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import LandingPage from "./pages/LandingPage";
 import PortfolioEditorPage from "./pages/PortfolioEditorPage";
 import PublicPortfolioPage from "./pages/PublicPortfolioPage";
+import TemplateGallery from "./pages/TemplateGallery";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -16,6 +17,7 @@ function Router() {
       <Route path={"/"} component={LandingPage} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/dashboard/portfolios/:id/edit"} component={PortfolioEditorPage} />
+      <Route path={"/templates"} component={TemplateGallery} />
       <Route path={"/404"} component={NotFound} />
       <Route path={"/:slug"} component={PublicPortfolioPage} />
       {/* Final fallback route */}

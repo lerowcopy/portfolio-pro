@@ -26,11 +26,14 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-export const portfolioTemplates = ["minimal", "gallery", "cards", "blog"] as const;
-export const portfolioColorSchemes = ["blue", "dark", "purple", "green"] as const;
+export const portfolioTemplates = ["minimal", "gallery", "cards", "blog", "creative", "agency", "showcase"] as const;
+export const portfolioColorSchemes = ["blue", "dark", "purple", "green", "warm"] as const;
 export const portfolioFontFamilies = ["inter", "playfair", "georgia"] as const;
 
 export type StoredSocialLink = { id: string; platform: SocialPlatform; url: string };
+export type StoredProject = { id: string; title: string; description: string; images: string[]; tags: string[]; year: string; href?: string };
+export type StoredService = { id: string; title: string; description: string };
+export type StoredPost = { id: string; title: string; excerpt: string; date: string; href?: string };
 
 /** User-owned publishable portfolio. All URL and visual state is stored separately from file bytes. */
 export const portfolios = mysqlTable("portfolios", {
@@ -44,6 +47,10 @@ export const portfolios = mysqlTable("portfolios", {
   template: mysqlEnum("template", portfolioTemplates).notNull().default("minimal"),
   colorScheme: mysqlEnum("colorScheme", portfolioColorSchemes).notNull().default("blue"),
   fontFamily: mysqlEnum("fontFamily", portfolioFontFamilies).notNull().default("inter"),
+  projects: json("projects").$type<StoredProject[]>(),
+  services: json("services").$type<StoredService[]>(),
+  posts: json("posts").$type<StoredPost[]>(),
+  contactEmail: varchar("contactEmail", { length: 320 }),
   isPublished: int("isPublished").notNull().default(0),
   publishedAt: timestamp("publishedAt"),
   slug: varchar("slug", { length: 50 }).notNull(),

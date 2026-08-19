@@ -14,6 +14,23 @@
 - [x] Add Vitest coverage for slug generation and protected portfolio procedures, including list/create/remove ownership scopes
 - [ ] Manually verify editor save/autosave and published portfolio success flow in an authenticated session
 - [ ] Complete the same end-to-end verification after Manus OAuth CAPTCHA can be completed in a browser session
+- [x] Prevent autosave from persisting temporary object-URL previews during an image upload
+- [x] Allow valid 2 MB images through the base64 transport limit while retaining decoded-size validation
+- [x] Expand reserved public route names to prevent conflicts with top-level application paths
+- [x] Extend portfolio data contract with projects, services, posts, color scheme Warm, and seven template names
+- [x] Build Minimal template with accessible one-column layout, featured projects, contact form, and footer
+- [x] Build Gallery template with responsive image grid, keyboard-accessible project overlays, and contact CTA
+- [x] Build Cards template with elevated project cards, tags, and accessible external links
+- [x] Build Blog template with projects, articles, archive action, and contact section
+- [x] Build Creative template with asymmetric hero, alternating project rows, and vibrant visual rhythm
+- [x] Build Agency template with navigation, services, case studies, team block, and large contact form
+- [x] Build Showcase template with full-bleed hero, interactive previews, work timeline, and about/contact sections
+- [x] Integrate seven-template selector, five color schemes, three fonts, and print-friendly rendering
+- [x] Add and verify explicit print-friendly handling for template controls, overlays, forms, and page breaks
+- [x] Add template rendering tests for all seven components
+- [x] Manually verify all seven template, five palette, and three font preview states in the public gallery
+- [x] Add a public template gallery to inspect all seven variants and five color schemes without authentication
+- [x] Document template component paths, tokens, breakpoints, motion, accessibility, and print behaviour
 - [x] Document local setup and environment requirements
 - [x] Add Vitest coverage proving protected portfolio procedures reject cross-user access
 - [x] Run final server typecheck and verify protected portfolio procedures after migration

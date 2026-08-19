@@ -15,6 +15,7 @@ const swatches: Record<PortfolioColorScheme, string> = {
   dark: "from-slate-700 via-slate-900 to-black",
   purple: "from-fuchsia-400 via-violet-500 to-indigo-800",
   green: "from-emerald-300 via-teal-500 to-cyan-700",
+  warm: "from-amber-300 via-orange-500 to-rose-600",
 };
 
 export function PortfolioCard({ portfolio, onDelete }: PortfolioCardProps) {

@@ -15,6 +15,13 @@
       "when": 1787139484449,
       "tag": "0001_secret_patriot",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1787141704615,
+      "tag": "0002_busy_rictor",
+      "breakpoints": true
     }
   ]
 }

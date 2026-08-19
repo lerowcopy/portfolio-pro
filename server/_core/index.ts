@@ -13,7 +13,7 @@ import { portfolios } from "../../drizzle/schema";
 import { getDb } from "../db";
 import { slugify } from "../portfolio";
 
-const PUBLIC_ROUTE_RESERVED = new Set(["dashboard", "auth", "api", "404", "assets", "manus-storage"]);
+const PUBLIC_ROUTE_RESERVED = new Set(["dashboard", "auth", "api", "404", "assets", "manus-storage", "login", "signup", "pricing", "settings", "terms", "privacy", "favicon", "templates"]);
 
 function isPublicSlugCandidate(slug: string): boolean {
   return /^[a-zA-Z0-9-]{3,50}$/.test(slug) && !PUBLIC_ROUTE_RESERVED.has(slug.toLowerCase());

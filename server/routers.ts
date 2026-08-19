@@ -15,7 +15,9 @@ const imageUploadSchema = z.object({
   portfolioId: z.number().int().positive(),
   kind: z.enum(["logo", "avatar"]),
   mimeType: z.enum(["image/jpeg", "image/png", "image/webp"]),
-  base64: z.string().min(8).max(2_800_000),
+  // Base64 expands a 2 MB image by roughly one third; decoded bytes are still
+  // checked below, which remains the authoritative file-size limit.
+  base64: z.string().min(8).max(3_200_000),
 });
 
 async function requireDatabase() {
@@ -32,6 +34,10 @@ function toClientPortfolio(row: typeof portfolios.$inferSelect) {
     logoUrl: row.logoUrl ?? "",
     avatarUrl: row.avatarUrl ?? "",
     socialLinks: row.socialLinks ?? [],
+    projects: row.projects ?? [],
+    services: row.services ?? [],
+    posts: row.posts ?? [],
+    contactEmail: row.contactEmail ?? "",
   };
 }
 
@@ -72,6 +78,10 @@ export const appRouter = router({
         template: "minimal",
         colorScheme: "blue",
         fontFamily: "inter",
+        projects: [],
+        services: [],
+        posts: [],
+        contactEmail: ctx.user.email ?? null,
         isPublished: 0,
         slug,
         slugManuallyEdited: 0,
@@ -99,6 +109,10 @@ export const appRouter = router({
         template: input.values.template,
         colorScheme: input.values.colorScheme,
         fontFamily: input.values.fontFamily,
+        projects: input.values.projects,
+        services: input.values.services,
+        posts: input.values.posts,
+        contactEmail: input.values.contactEmail || null,
         isPublished: input.values.isPublished ? 1 : 0,
         publishedAt: justPublished ? new Date() : existing.publishedAt,
         slug,
