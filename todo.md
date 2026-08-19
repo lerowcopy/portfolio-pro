@@ -18,6 +18,18 @@
 - [x] Show a true temporary object-URL preview before each project-image upload completes
 - [x] Replace synthetic numeric upload progress with explicit transport-aware staged upload status
 - [x] Move unauthenticated project-route navigation out of the React render phase
+- [ ] Enable Stripe integration and configure required sandbox secrets and price IDs
+- [ ] Add normalized subscriptions, payment events, and Stripe webhook event tables with idempotency keys
+- [ ] Implement protected checkout, portal, plan-change and cancellation server procedures
+- [ ] Implement signature-verified Stripe webhook endpoint with retry-safe event handling and audit persistence
+- [ ] Add subscription access gating for Pro and Business capabilities
+- [ ] Build pricing, checkout success/cancel, and billing dashboard user interfaces
+- [ ] Add billing test coverage, webhook security documentation, and manual Stripe sandbox QA checklist
+- [ ] Prepare external GitHub, Vercel, Supabase, Next.js and Stripe initialization blueprint for Portfolio Pro
+- [ ] Prepare a detailed browser-only Windows setup guide for GitHub, Vercel, Supabase, Stripe and Resend
+- [ ] Prepare YooKassa migration package for Next.js 14: SDK, checkout, subscriptions, webhook and pricing UI
+- [x] Verify and finalize the FreeKassa migration package for Next.js 14 and Prisma: checkout, subscriptions, callback validation and webhook replacement
+- [x] Update the browser-only Windows setup guide from Stripe to FreeKassa checkout, callback, recurring and testing flow
 - [x] Add normalized portfolio_projects schema with title, description, images, URL, tags, dates, sort order, and portfolio ownership
 - [x] Add server-side project CRUD, image upload, and reorder procedures with ownership and file validation
 - [x] Add project list route with search, pagination, optimistic delete, and reorder controls
