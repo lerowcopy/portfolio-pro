@@ -568,6 +568,35 @@ Merge в main → Production deploy
 | Появилось желание включить IP allow-list | Platform proxy headers не подтверждены. | Оставьте `FREEKASSA_ENFORCE_IP_ALLOWLIST=false`, пока не подтвердите trusted-proxy behavior Vercel; signature, amount и idempotency обязательны всегда. |
 | Нужна команда, но нет terminal на Windows | Это не проблема. | Откройте Codespaces и запускайте команду в его cloud terminal. |
 
+## 18. Важное: как связаны Manus, GitHub и Vercel
+
+В этой задаче существуют **два разных репозитория**. Они не синхронизируются друг с другом автоматически, потому что содержат разные runtime и разные deployment targets.
+
+| Repository | Роль | Куда попадают изменения | Можно ли подключать к Vercel как Next.js app |
+|---|---|---|---|
+| `portfolio-pro` | Текущий Manus-проект на React/Vite/Express. Это источник кода, который создавался в Manus. | Сохранённые checkpoint этого проекта синхронизируются с GitHub repository `portfolio-pro`. | Нет: в нём нет Next.js runtime и зависимости `next`. |
+| `portfolio-pro-next` | Отдельная внешняя Next.js 14 реализация для Supabase, FreeKassa и Vercel. | Commit/push из Codespaces попадает в GitHub repository `portfolio-pro-next`. | Да: Vercel импортирует и deploys именно этот repository. |
+
+> **Нельзя ожидать цепочку `Manus → portfolio-pro → portfolio-pro-next → Vercel` без отдельного процесса миграции.** Обычный Git push не преобразует React/Vite/Express приложение в Next.js App Router, не переносит database schema и не заменяет Manus OAuth/S3 на Supabase Auth/Storage.
+
+Правильный workflow выглядит так:
+
+```text
+Изменения в текущем приложении Manus
+        ↓ checkpoint synchronizes source history
+GitHub: portfolio-pro
+        ↓ явная поэтапная миграция feature-by-feature
+GitHub: portfolio-pro-next
+        ↓ push в main
+Vercel: Production Deployment
+```
+
+Для внешнего production проекта считайте `portfolio-pro-next` **единственным источником кода для Vercel**. Когда требуется перенести готовую функцию из Manus, переносите её явно по слоям: сначала domain types и data model, затем server-side Next.js route/server action, затем React UI, тесты и Supabase policies. После проверки commit/push делается в `portfolio-pro-next`, и Vercel deploys новую версию автоматически. [2]
+
+Не подключайте Vercel к `portfolio-pro` и не настраивайте GitHub Action, который механически копирует все файлы из `portfolio-pro` в `portfolio-pro-next`: это перезапишет Next.js starter, перенесёт несовместимые runtime files и не создаст работающий production deploy.
+
+Если ваша цель — продолжать разрабатывать **только в Manus**, внешний Next.js/Vercel migration не будет автоматической. В таком случае либо продолжайте использовать встроенный deployment Manus для текущего приложения, либо принимайте поэтапную миграцию в `portfolio-pro-next` как отдельную работу. Для управляемого Vercel production потока после миграции создавайте и проверяйте новые features в `portfolio-pro-next`, а не в Vite repository.
+
 ## References
 
 [1]: https://docs.github.com/en/codespaces/getting-started/quickstart "GitHub Codespaces quickstart"

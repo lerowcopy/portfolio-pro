@@ -35,6 +35,7 @@
 - [x] Document the safe pnpm approve-builds step for the Next.js external repository setup
 - [x] Refine the Windows guide for pnpm ignored-builds recovery when the exact package list varies
 - [x] Document the first GitHub Codespaces commit/push and Vercel auto-deploy flow for portfolio-pro-next
+- [x] Document a correct explicit delivery flow from the Manus-linked portfolio-pro repository to GitHub and Vercel
 - [x] Add normalized portfolio_projects schema with title, description, images, URL, tags, dates, sort order, and portfolio ownership
 - [x] Add server-side project CRUD, image upload, and reorder procedures with ownership and file validation
 - [x] Add project list route with search, pagination, optimistic delete, and reorder controls
