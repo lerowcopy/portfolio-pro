@@ -88,7 +88,19 @@ pnpm exec next --version
 pnpm build
 ```
 
-При выполнении `pnpm approve-builds` используйте пробел, чтобы выбрать **только** `@tailwindcss/oxide` и `esbuild`, затем нажмите Enter. Это ожидаемые build-time dependencies для созданного Next.js/Tailwind проекта. Если pnpm показывает любое незнакомое имя, не одобряйте его: выйдите из выбора и сначала проверьте dependency tree. После одобрения повторно выполните `pnpm build`.
+В зависимости от точной версии starter pnpm может показать разные ожидаемые пакеты, например `@tailwindcss/oxide`, `esbuild` или `unrs-resolver`. При выполнении `pnpm approve-builds` используйте пробел, чтобы выбрать **только точные имена, показанные в текущем `ERR_PNPM_IGNORED_BUILDS` сообщении**, затем нажмите Enter. Не добавляйте имена вручную и не одобряйте незнакомый package.
+
+Если `create-next-app` завершился сообщением `pnpm install has failed` после генерации файлов, **не запускайте `pnpm create next-app@14 .` повторно**. Файлы проекта уже созданы. Выполните recovery-команды в том же Codespaces terminal:
+
+```bash
+pnpm approve-builds
+# В интерактивном списке выберите только packages из текущего ERR_PNPM_IGNORED_BUILDS.
+pnpm install
+pnpm exec next --version
+pnpm build
+```
+
+После успешного `pnpm build` продолжайте с commit и Vercel import. Если следующий `pnpm install` снова показывает ignored build script, повторите `pnpm approve-builds` только для нового package, указанного pnpm, а не для произвольных зависимостей.
 
 Команда `pnpm exec next --version` должна вывести версию `14.x`. После успешного `pnpm build` откройте **Source Control**, добавьте все созданные файлы, введите commit message `Initialize Next.js 14 external application`, затем нажмите **Commit** и **Sync Changes**. GitHub документирует этот browser flow для commit/push и private repositories. [1]
 
