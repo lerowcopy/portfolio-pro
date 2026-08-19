@@ -41,56 +41,74 @@ Vercel (Next.js App Router, Preview и Production deployments)
 
 Сохраните database password Supabase, Supabase service-role key, FreeKassa API key, оба Secret Word и Resend API key в password manager. **Никогда** не публикуйте их в GitHub issue, commit, screenshot, чат или browser environment variable.
 
-## 3. Шаг 1 — подключить существующий GitHub repository к Vercel
+## 3. Шаг 1 — создать отдельный внешний Next.js repository
 
-> **Для этого проекта репозиторий `portfolio-pro` уже создан.** Не используйте **Clone Template** и не пытайтесь повторно создать repository с тем же именем: GitHub корректно вернёт ошибку `A repository named "portfolio-pro" already exists`. Вместо этого импортируйте существующий private repository в Vercel.
+> **Причина вашей ошибки:** существующий `portfolio-pro` — это репозиторий текущего Manus-приложения. В его `package.json` есть Vite и Express, но нет зависимости `next`, поэтому Vercel не может определить Next.js version. Его не нужно и нельзя использовать как исходный repository для описанного в этой инструкции внешнего Next.js 14 deploy.
 
-1. Откройте GitHub и убедитесь, что repository `portfolio-pro` существует в вашем account и имеет статус **Private**.
-2. Откройте [Vercel Dashboard](https://vercel.com/dashboard) и войдите через тот же GitHub account.
-3. Нажмите **Add New → Project**.
-4. В разделе **Import Git Repository** найдите `portfolio-pro` и нажмите **Import**. Не выбирайте **Clone Template**.
-5. Проверьте, что Vercel распознал Framework Preset как **Next.js**.
-6. Нажмите **Deploy**.
-7. После успешного deploy откройте **Go to Dashboard**. Сохраните адрес наподобие `https://portfolio-pro-<scope>.vercel.app` — это временный production URL.
+Создайте отдельный private repository для внешней реализации. Ниже используется имя **`portfolio-pro-next`**; оно не конфликтует с уже существующим `portfolio-pro`.
 
-Если `portfolio-pro` не появляется в списке Vercel, откройте **Add GitHub Account** или **Configure GitHub App** на том же экране и предоставьте Vercel доступ именно к этому repository. После выдачи доступа обновите список и нажмите **Import**.
+1. В GitHub нажмите **New repository**.
+2. В поле **Repository name** укажите `portfolio-pro-next`.
+3. Выберите **Private**.
+4. Важно: **не** отмечайте `Add a README file`, `.gitignore` или license. Repository должен быть пустым, чтобы `create-next-app` смог создать проект в его корне.
+5. Нажмите **Create repository**.
+6. Не импортируйте текущий `portfolio-pro` в Vercel. Ошибочный Vercel project можно оставить как неактивный либо удалить через **Settings → General → Delete Project**; это не удаляет GitHub repository.
 
-Если вам намеренно нужен второй независимый проект, создайте новый private repository с уникальным именем, например `portfolio-pro-next` или `portfolio-pro-external`. Для текущего проекта этого делать не нужно.
+## 4. Шаг 2 — создать Next.js 14 приложение в GitHub Codespaces
 
-> Vercel автоматически создаёт Preview Deployment для каждого push и pull request; push в production branch `main` обновляет production deployment. [2]
-
-## 4. Шаг 2 — открыть проект в GitHub Codespaces
-
-Вы не устанавливаете VS Code, Git или Node.js на Windows.
-
-1. В Vercel нажмите **View Git Repository**, либо откройте GitHub repository `portfolio-pro`.
+1. Откройте новый GitHub repository `portfolio-pro-next`.
 2. Нажмите зелёную кнопку **Code**.
 3. Откройте вкладку **Codespaces**.
 4. Нажмите **Create codespace on main**.
 5. Дождитесь browser-based VS Code. В нижней части окна находится cloud terminal.
 
-В **Codespaces terminal** выполните эти команды. Они запускаются в облаке, а не на Windows PC.
+В cloud terminal выполните команды ниже. Первая команда создаёт настоящий Next.js 14 project и добавляет `next` в `dependencies`; именно этого не хватало в Vercel build log.
 
 ```bash
 corepack enable
+
+pnpm create next-app@14 . \
+  --typescript \
+  --tailwind \
+  --eslint \
+  --app \
+  --src-dir \
+  --import-alias "@/*" \
+  --use-pnpm
 
 pnpm add @supabase/supabase-js @supabase/ssr \
   zod react-hook-form @hookform/resolvers \
   @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities \
   lucide-react framer-motion resend
 
-# Выполняется только при переносе существующего Stripe-проекта.
-pnpm remove stripe @stripe/stripe-js
+pnpm exec next --version
+pnpm build
+```
 
-pnpm add -D supabase
+Команда `pnpm exec next --version` должна вывести версию `14.x`. После успешного `pnpm build` откройте **Source Control**, добавьте все созданные файлы, введите commit message `Initialize Next.js 14 external application`, затем нажмите **Commit** и **Sync Changes**. GitHub документирует этот browser flow для commit/push и private repositories. [1]
+
+## 5. Шаг 3 — импортировать новый Next.js repository в Vercel
+
+1. Откройте [Vercel Dashboard](https://vercel.com/dashboard) и войдите через тот же GitHub account.
+2. Нажмите **Add New → Project**.
+3. В разделе **Import Git Repository** найдите `portfolio-pro-next` и нажмите **Import**. Не выбирайте **Clone Template**.
+4. Проверьте настройки import: Framework Preset — **Next.js**, Root Directory — `./`, Build Command — стандартный `next build`.
+5. Нажмите **Deploy**.
+6. После успешного deploy откройте **Go to Dashboard**. Сохраните адрес наподобие `https://portfolio-pro-next-<scope>.vercel.app` — это временный production URL.
+
+Если `portfolio-pro-next` не появляется в списке Vercel, откройте **Add GitHub Account** или **Configure GitHub App** на том же экране и предоставьте Vercel доступ именно к этому repository. После выдачи доступа обновите список и нажмите **Import**.
+
+> Vercel автоматически создаёт Preview Deployment для каждого push и pull request; push в production branch `main` обновляет production deployment. [2]
+
+После initial deployment вернитесь в Codespaces нового `portfolio-pro-next`. Для запуска development server выполните:
+
+```bash
 pnpm dev
 ```
 
-Для FreeKassa не устанавливайте случайный npm SDK и не добавляйте `date-fns` только ради одного `addDays`. Используйте встроенный `fetch` Next.js, `node:crypto` и небольшую локальную функцию для работы с датами. Официальная документация FreeKassa описывает HTTP API и алгоритмы подписи. [6] [7]
+Codespaces предложит открыть forwarded port 3000 в новой browser tab. Для FreeKassa не устанавливайте случайный npm SDK и не добавляйте `date-fns` только ради одного `addDays`: используйте встроенный `fetch` Next.js, `node:crypto` и небольшую локальную функцию для работы с датами. Официальная документация FreeKassa описывает HTTP API и алгоритмы подписи. [6] [7]
 
-Codespaces предложит открыть forwarded port 3000 в новой browser tab. Изменения можно делать в файловом дереве браузерного VS Code. Для сохранения откройте **Source Control**, введите commit message, нажмите **Commit**, затем **Sync Changes**. GitHub документирует данный browser flow для commit/push и private repository. [1]
-
-## 5. Шаг 3 — создать Supabase проект
+## 6. Шаг 4 — создать Supabase проект
 
 1. Откройте [Supabase Dashboard](https://supabase.com/dashboard/) и войдите через GitHub.
 2. Нажмите **New project**.
@@ -100,9 +118,9 @@ Codespaces предложит открыть forwarded port 3000 в новой b
 6. Дождитесь состояния **Healthy**.
 7. Откройте **Settings → API** и приготовьте Project URL, Publishable key и Service role key.
 
-### 5.1 Подключить Supabase к Vercel
+### 6.1 Подключить Supabase к Vercel
 
-1. В Vercel откройте проект `portfolio-pro`.
+1. В Vercel откройте проект, импортированный из `portfolio-pro-next`.
 2. Перейдите в **Settings → Integrations → Browse Marketplace**.
 3. Найдите **Supabase** и нажмите **Add Integration**.
 4. Выберите Vercel project и Supabase project `portfolio-pro-prod`.
@@ -110,7 +128,7 @@ Codespaces предложит открыть forwarded port 3000 в новой b
 
 Supabase документирует browser-only путь: создать проект на Vercel, затем установить Supabase integration из Vercel Marketplace; database schema можно применить через Supabase SQL Editor. [3]
 
-## 6. Шаг 4 — создать схему в Supabase SQL Editor
+## 7. Шаг 5 — создать схему в Supabase SQL Editor
 
 1. В Supabase откройте **SQL Editor → New query**.
 2. Вставьте SQL ниже одним блоком.
@@ -264,7 +282,7 @@ create policy "payment event own read" on public.payment_events for select using
 
 **Важно для Stripe migration:** не удаляйте исторические Stripe-колонки и таблицы до reconciliation. Сначала отключите Stripe webhook, завершите проверку FreeKassa в тестовой среде, подтвердите callback flow и только после этого отдельной миграцией архивируйте или удалите legacy Stripe data.
 
-## 7. Шаг 5 — настроить Supabase Auth
+## 8. Шаг 6 — настроить Supabase Auth
 
 В Supabase откройте **Authentication → Providers**.
 
@@ -275,7 +293,7 @@ create policy "payment event own read" on public.payment_events for select using
 
 Для MVP используйте Supabase Auth вместо самостоятельной password hashing/login системы. Он поддерживает verification и password reset.
 
-## 8. Шаг 6 — создать Storage buckets и policies
+## 9. Шаг 7 — создать Storage buckets и policies
 
 В Supabase откройте **Storage → New bucket** и создайте private buckets.
 
@@ -312,7 +330,7 @@ create policy "user reads own project images" on storage.objects for select to a
 
 Добавьте server-side allow-list: JPEG, PNG, WebP; максимум 5 MB; не более пяти изображений на проект; generated filenames; проверка ownership portfolio до выдачи signed upload URL.
 
-## 9. Шаг 7 — задать environment variables в Vercel
+## 10. Шаг 8 — задать environment variables в Vercel
 
 В Vercel откройте **Project → Settings → Environment Variables**. Добавляйте значения только через браузер.
 
@@ -337,7 +355,7 @@ create policy "user reads own project images" on storage.objects for select to a
 
 После добавления environment variables сделайте **Redeploy** в Vercel. Никогда не добавляйте `NEXT_PUBLIC_` к FreeKassa API key или Secret Word.
 
-## 10. Шаг 8 — настроить FreeKassa без локальной машины
+## 11. Шаг 9 — настроить FreeKassa без локальной машины
 
 Все действия выполняются в [FreeKassa Merchant Dashboard](https://merchant.freekassa.net/). Названия экранов могут немного отличаться в зависимости от статуса merchant account, поэтому при сомнении сверяйтесь с официальной документацией. [6]
 
@@ -406,7 +424,7 @@ Endpoint `/api/cron/freekassa-renew` обязан сверять заголов�
 
 > **Практическое правило:** cancellation в собственной billing UI означает `cancel_at_period_end = true`. Пользователь сохраняет доступ до `current_period_end`, но исключается из следующего cron renewal.
 
-## 11. Шаг 9 — настроить Resend
+## 12. Шаг 10 — настроить Resend
 
 1. Откройте [Resend](https://resend.com/) и создайте account.
 2. В **Domains** добавьте свой домен.
@@ -417,7 +435,7 @@ Endpoint `/api/cron/freekassa-renew` обязан сверять заголов�
 
 Для первого MVP verification/password-reset лучше отправлять через Supabase Auth SMTP/настройки. Resend используйте для branded product emails: успешный платёж, неуспешное продление и отмена подписки.
 
-## 12. Шаг 10 — как работать с кодом только из браузера
+## 13. Шаг 11 — как работать с кодом только из браузера
 
 | Задача | Где делать |
 |---|---|
@@ -447,7 +465,7 @@ Commit + Push через браузер
 Merge в main → Production deploy
 ```
 
-## 13. Шаг 11 — тестировать FreeKassa flow без локальной машины
+## 14. Шаг 12 — тестировать FreeKassa flow без локальной машины
 
 Проверяйте payment flow в test mode/sandbox вашего merchant account до production. Конкретные тестовые методы зависят от доступных способов оплаты и статуса магазина, поэтому используйте только актуальные сценарии, показанные FreeKassa в кабинете или документации. [6]
 
@@ -464,7 +482,7 @@ Merge в main → Production deploy
 
 Не тестируйте live production Result URL произвольными внешними запросами. Для controlled negative tests используйте отдельный Preview/Sandbox environment, временные тестовые credentials и после проверки удаляйте test records.
 
-## 14. Что переносить из текущего Portfolio Pro
+## 15. Что переносить из текущего Portfolio Pro
 
 Не переносите текущий Vite/Express runtime механически. Переносите domain logic постепенно.
 
@@ -475,7 +493,7 @@ Merge в main → Production deploy
 5. Supabase Auth и RLS.
 6. **FreeKassa после стабилизации editor/project workflow:** сначала checkout и Result URL, затем idempotency, далее recurring cron и собственная billing UI.
 
-## 15. Финальный browser-only checklist
+## 16. Финальный browser-only checklist
 
 - [ ] GitHub repo private.
 - [ ] Vercel production URL works.
@@ -494,7 +512,7 @@ Merge в main → Production deploy
 - [ ] A test/sandbox payment and callback were checked in FreeKassa dashboard and Vercel logs before enabling production payments.
 - [ ] Resend domain is verified before production product emails are enabled.
 
-## 16. Частые проблемы и решения
+## 17. Частые проблемы и решения
 
 | Симптом | Вероятная причина | Действие в браузере |
 |---|---|---|
