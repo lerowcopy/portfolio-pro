@@ -102,7 +102,28 @@ pnpm build
 
 После успешного `pnpm build` продолжайте с commit и Vercel import. Если следующий `pnpm install` снова показывает ignored build script, повторите `pnpm approve-builds` только для нового package, указанного pnpm, а не для произвольных зависимостей.
 
-Команда `pnpm exec next --version` должна вывести версию `14.x`. После успешного `pnpm build` откройте **Source Control**, добавьте все созданные файлы, введите commit message `Initialize Next.js 14 external application`, затем нажмите **Commit** и **Sync Changes**. GitHub документирует этот browser flow для commit/push и private repositories. [1]
+Команда `pnpm exec next --version` должна вывести версию `14.x`.
+
+### 4.1 Первый commit и push из Codespaces
+
+После успешного `pnpm build` отправьте файлы в **уже созданный** GitHub repository `portfolio-pro-next`. Новый repository создавать не нужно: Codespaces уже подключён к нему как к `origin`.
+
+1. В левой панели Codespaces нажмите **Source Control** (иконка ветки).
+2. В блоке **Changes** нажмите `+` рядом с каждым файлом либо кнопку `+` рядом с заголовком **Changes**, чтобы stage all changes.
+3. В поле **Message** введите: `Initialize Next.js 14 external application`.
+4. Нажмите **Commit**. Если Codespaces спросит, нужно ли автоматически stage all files, выберите **Yes**.
+5. Нажмите **Sync Changes**. При первом push может отображаться **Publish Branch** — выберите его. После завершения откройте GitHub repository `portfolio-pro-next` в новой вкладке: должны появиться `package.json`, `pnpm-lock.yaml`, `src/`, `public/` и другие файлы Next.js.
+
+Тот же результат можно получить в cloud terminal, если удобнее команды:
+
+```bash
+git status
+git add .
+git commit -m "Initialize Next.js 14 external application"
+git push origin main
+```
+
+Используйте **один** способ: либо Source Control, либо terminal commands; не выполняйте commit второй раз. GitHub документирует browser flow для commit/push и private repositories. [1]
 
 ## 5. Шаг 3 — импортировать новый Next.js repository в Vercel
 
@@ -114,6 +135,8 @@ pnpm build
 6. После успешного deploy откройте **Go to Dashboard**. Сохраните адрес наподобие `https://portfolio-pro-next-<scope>.vercel.app` — это временный production URL.
 
 Если `portfolio-pro-next` не появляется в списке Vercel, откройте **Add GitHub Account** или **Configure GitHub App** на том же экране и предоставьте Vercel доступ именно к этому repository. После выдачи доступа обновите список и нажмите **Import**.
+
+После import Vercel связан с GitHub repository автоматически. Каждый последующий push в `main` запускает новый **Production Deployment**; push в другую ветку или pull request создаёт **Preview Deployment**. Вручную загружать ZIP или повторно создавать Vercel project не нужно. [2]
 
 > Vercel автоматически создаёт Preview Deployment для каждого push и pull request; push в production branch `main` обновляет production deployment. [2]
 
