@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import LandingPage from "./pages/LandingPage";
 import PortfolioEditorPage from "./pages/PortfolioEditorPage";
 import PublicPortfolioPage from "./pages/PublicPortfolioPage";
+import ProjectFormPage from "./pages/ProjectFormPage";
+import ProjectsPage from "./pages/ProjectsPage";
 import TemplateGallery from "./pages/TemplateGallery";
 
 function Router() {
@@ -17,6 +19,9 @@ function Router() {
       <Route path={"/"} component={LandingPage} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/dashboard/portfolios/:id/edit"} component={PortfolioEditorPage} />
+      <Route path={"/dashboard/portfolios/:id/projects/new"} component={ProjectFormPage} />
+      <Route path={"/dashboard/portfolios/:id/projects/:projectId/edit"} component={ProjectFormPage} />
+      <Route path={"/dashboard/portfolios/:id/projects"} component={ProjectsPage} />
       <Route path={"/templates"} component={TemplateGallery} />
       <Route path={"/404"} component={NotFound} />
       <Route path={"/:slug"} component={PublicPortfolioPage} />

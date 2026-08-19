@@ -37,7 +37,8 @@ describe("portfolio list, create and remove procedures", () => {
       id: 71, userId: 11, title: "Untitled portfolio", bio: "", logoUrl: null, avatarUrl: null, socialLinks: [], template: "minimal", colorScheme: "blue", fontFamily: "inter", isPublished: 0, publishedAt: null, slug: "untitled-portfolio-2", slugManuallyEdited: 0, createdAt: new Date(), updatedAt: new Date(),
     };
     const insertValues = vi.fn(async () => [{ insertId: 71 }]);
-    const select = vi.fn(() => ({ from: vi.fn(() => ({ where: vi.fn(() => ({ limit: vi.fn(async () => [createdRow]) })) })) }));
+    const limits = [[createdRow]];
+    const select = vi.fn(() => ({ from: vi.fn(() => ({ where: vi.fn(() => ({ limit: vi.fn(async () => limits.shift() ?? []), orderBy: vi.fn(async () => []) })) })) }));
     vi.mocked(getDb).mockResolvedValue({ select, insert: vi.fn(() => ({ values: insertValues })) } as never);
     vi.mocked(createUniqueSlug).mockResolvedValue("untitled-portfolio-2");
 
@@ -69,7 +70,7 @@ describe("portfolio publishing success path", () => {
   it("publishes an owned portfolio and returns the normalized persisted record", async () => {
     const publishedRow = { ...baseRow, isPublished: 1, publishedAt: new Date() };
     const resultQueue = [[baseRow], [publishedRow]];
-    const select = vi.fn(() => ({ from: vi.fn(() => ({ where: vi.fn(() => ({ limit: vi.fn(async () => resultQueue.shift() ?? []) })) })) }));
+    const select = vi.fn(() => ({ from: vi.fn(() => ({ where: vi.fn(() => ({ limit: vi.fn(async () => resultQueue.shift() ?? []), orderBy: vi.fn(async () => []) })) })) }));
     const updateWhere = vi.fn(async () => undefined);
     const updateSet = vi.fn(() => ({ where: updateWhere }));
     vi.mocked(getDb).mockResolvedValue({ select, update: vi.fn(() => ({ set: updateSet })) } as never);
@@ -85,10 +86,12 @@ describe("portfolio publishing success path", () => {
   });
 
   it("returns a published portfolio from the public slug procedure", async () => {
-    const select = vi.fn(() => ({ from: vi.fn(() => ({ where: vi.fn(() => ({ limit: vi.fn(async () => [{ ...baseRow, isPublished: 1, publishedAt: new Date() }]) })) })) }));
+    const results = [[{ ...baseRow, isPublished: 1, publishedAt: new Date() }]];
+    const persistedProject = { id: 91, portfolioId: 71, title: "Mobile App Redesign", description: "A comprehensive mobile experience refresh.", images: ["/manus-storage/projects/mobile.webp"], tags: ["UX"], projectUrl: "https://example.com", startDate: new Date("2025-01-01T00:00:00.000Z"), endDate: null, sortOrder: 0, createdAt: new Date(), updatedAt: new Date() };
+    const select = vi.fn(() => ({ from: vi.fn(() => ({ where: vi.fn(() => ({ limit: vi.fn(async () => results.shift() ?? []), orderBy: vi.fn(async () => [persistedProject]) })) })) }));
     vi.mocked(getDb).mockResolvedValue({ select } as never);
 
     const caller = appRouter.createCaller(createContext());
-    await expect(caller.publicPortfolio.bySlug({ slug: "maker-portfolio" })).resolves.toMatchObject({ id: 71, isPublished: true, slug: "maker-portfolio" });
+    await expect(caller.publicPortfolio.bySlug({ slug: "maker-portfolio" })).resolves.toMatchObject({ id: 71, isPublished: true, slug: "maker-portfolio", projects: [expect.objectContaining({ id: 91, title: "Mobile App Redesign" })] });
   });
 });

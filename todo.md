@@ -14,6 +14,16 @@
 - [x] Add Vitest coverage for slug generation and protected portfolio procedures, including list/create/remove ownership scopes
 - [ ] Manually verify editor save/autosave and published portfolio success flow in an authenticated session
 - [ ] Complete the same end-to-end verification after Manus OAuth CAPTCHA can be completed in a browser session
+- [x] Analyse the uploaded content and integrate its applicable changes into Portfolio Pro
+- [x] Show a true temporary object-URL preview before each project-image upload completes
+- [x] Replace synthetic numeric upload progress with explicit transport-aware staged upload status
+- [x] Move unauthenticated project-route navigation out of the React render phase
+- [x] Add normalized portfolio_projects schema with title, description, images, URL, tags, dates, sort order, and portfolio ownership
+- [x] Add server-side project CRUD, image upload, and reorder procedures with ownership and file validation
+- [x] Add project list route with search, pagination, optimistic delete, and reorder controls
+- [x] Add shared create/edit project form with React Hook Form, Zod, tags, dates, drag-drop images, previews, progress, and errors
+- [x] Hydrate portfolio preview templates from persisted project records rather than portfolio JSON
+- [x] Add tests and manual QA documentation for project CRUD, uploads, ordering, and public rendering
 - [x] Add server-side success coverage for publishing an owned portfolio and reading it through the public slug procedure
 - [x] Prevent autosave from persisting temporary object-URL previews during an image upload
 - [x] Allow valid 2 MB images through the base64 transport limit while retaining decoded-size validation

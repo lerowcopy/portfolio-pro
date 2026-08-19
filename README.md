@@ -43,11 +43,17 @@ pnpm test
 
 The current 23-test suite verifies slug transliteration and sanitization, image signature validation, OAuth logout behavior, protected ownership checks, successful portfolio publication, public-slug retrieval, and the semantic rendering of all seven template components.
 
+For the OAuth-dependent browser flow that cannot be run in a headless environment, use [`docs/manual-authenticated-qa.md`](docs/manual-authenticated-qa.md) after login is available.
+
 ## Product flows
 
 After logging in, create a portfolio from the dashboard. The editor updates its right-side preview locally through React Hook Form state; typing and switching templates do not make network requests. Saving happens manually or every 30 seconds while the form is dirty. Logo and avatar uploads first show an object-URL preview, then replace it with a managed S3 URL after server validation.
 
 Only a published portfolio is available at `/<slug>`. The server checks a direct single-segment request before the SPA fallback; unknown and unpublished slugs receive HTTP 404 with a noindex page.
+
+## Project management
+
+The editor header links to a dedicated project workspace where project records can be created, edited, searched, reordered, and deleted. The implementation uses a normalized table, protected tRPC operations and managed S3 image URLs. See [`docs/project-management.md`](docs/project-management.md) for routes, upload constraints, test coverage and the manual QA flow.
 
 ## Template library
 

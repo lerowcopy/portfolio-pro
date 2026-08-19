@@ -1,4 +1,4 @@
-import { index, int, json, mysqlEnum, mysqlTable, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
+import { date, index, int, json, mysqlEnum, mysqlTable, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
 import type { SocialPlatform } from "../shared/portfolio";
 
 /**
@@ -65,3 +65,25 @@ export const portfolios = mysqlTable("portfolios", {
 
 export type Portfolio = typeof portfolios.$inferSelect;
 export type InsertPortfolio = typeof portfolios.$inferInsert;
+
+/** Normalized project records; image bytes are stored in managed S3, and only URLs live here. */
+export const portfolioProjects = mysqlTable("portfolio_projects", {
+  id: int("id").autoincrement().primaryKey(),
+  portfolioId: int("portfolioId").notNull().references(() => portfolios.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 100 }).notNull(),
+  description: varchar("description", { length: 1000 }).notNull(),
+  images: json("images").$type<string[]>().notNull(),
+  projectUrl: varchar("projectUrl", { length: 500 }),
+  tags: json("tags").$type<string[]>().notNull(),
+  startDate: date("startDate"),
+  endDate: date("endDate"),
+  sortOrder: int("sortOrder").notNull().default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [
+  index("portfolio_projects_portfolio_order_idx").on(table.portfolioId, table.sortOrder),
+  index("portfolio_projects_portfolio_created_idx").on(table.portfolioId, table.createdAt),
+]);
+
+export type PortfolioProject = typeof portfolioProjects.$inferSelect;
+export type InsertPortfolioProject = typeof portfolioProjects.$inferInsert;

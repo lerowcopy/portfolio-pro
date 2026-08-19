@@ -22,7 +22,7 @@ export const socialLinkSchema = z.object({
 });
 
 export const projectSchema = z.object({
-  id: z.string().min(1).max(64),
+  id: z.union([z.string().min(1).max(64), z.number().int().positive()]),
   title: z.string().trim().min(2).max(120),
   description: z.string().trim().max(500),
   images: z.array(portfolioImageUrl).min(1).max(6),
@@ -30,6 +30,22 @@ export const projectSchema = z.object({
   year: z.string().trim().min(1).max(12),
   href: z.string().url().max(500).optional(),
 });
+
+export const projectInputSchema = z.object({
+  title: z.string().trim().min(3, "Название должно содержать минимум 3 символа.").max(100),
+  description: z.string().trim().min(10, "Описание должно содержать минимум 10 символов.").max(1000),
+  images: z.array(portfolioImageUrl).max(5, "Можно добавить не более 5 изображений."),
+  tags: z.array(z.string().trim().min(1).max(32)).max(12),
+  projectUrl: z.string().trim().url("Введите корректный URL.").max(500).or(z.literal("")),
+  startDate: z.string().date().or(z.literal("")),
+  endDate: z.string().date().or(z.literal("")),
+}).superRefine((project, ctx) => {
+  if (project.startDate && project.endDate && project.endDate < project.startDate) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["endDate"], message: "Дата окончания не может быть раньше даты начала." });
+  }
+});
+
+export type ProjectInput = z.infer<typeof projectInputSchema>;
 
 export const serviceSchema = z.object({
   id: z.string().min(1).max(64),
