@@ -14,6 +14,7 @@
 - [x] Add Vitest coverage for slug generation and protected portfolio procedures, including list/create/remove ownership scopes
 - [ ] Manually verify editor save/autosave and published portfolio success flow in an authenticated session
 - [ ] Complete the same end-to-end verification after Manus OAuth CAPTCHA can be completed in a browser session
+- [x] Add server-side success coverage for publishing an owned portfolio and reading it through the public slug procedure
 - [x] Prevent autosave from persisting temporary object-URL previews during an image upload
 - [x] Allow valid 2 MB images through the base64 transport limit while retaining decoded-size validation
 - [x] Expand reserved public route names to prevent conflicts with top-level application paths

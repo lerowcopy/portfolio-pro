@@ -60,3 +60,35 @@ describe("portfolio list, create and remove procedures", () => {
     expect(where).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("portfolio publishing success path", () => {
+  const baseRow = {
+    id: 71, userId: 11, title: "Maker portfolio", bio: "A considered body of work.", logoUrl: null, avatarUrl: null, socialLinks: [], template: "showcase", colorScheme: "warm", fontFamily: "playfair", projects: [], services: [], posts: [], contactEmail: "maker@example.com", isPublished: 0, publishedAt: null, slug: "maker-portfolio", slugManuallyEdited: 0, createdAt: new Date(), updatedAt: new Date(),
+  };
+
+  it("publishes an owned portfolio and returns the normalized persisted record", async () => {
+    const publishedRow = { ...baseRow, isPublished: 1, publishedAt: new Date() };
+    const resultQueue = [[baseRow], [publishedRow]];
+    const select = vi.fn(() => ({ from: vi.fn(() => ({ where: vi.fn(() => ({ limit: vi.fn(async () => resultQueue.shift() ?? []) })) })) }));
+    const updateWhere = vi.fn(async () => undefined);
+    const updateSet = vi.fn(() => ({ where: updateWhere }));
+    vi.mocked(getDb).mockResolvedValue({ select, update: vi.fn(() => ({ set: updateSet })) } as never);
+    vi.mocked(createUniqueSlug).mockResolvedValue("maker-portfolio");
+
+    const caller = appRouter.createCaller(createContext());
+    const values = { ...baseRow, logoUrl: "", avatarUrl: "", isPublished: true, slugManuallyEdited: false };
+    const result = await caller.portfolios.update({ id: 71, values });
+
+    expect(updateSet).toHaveBeenCalledWith(expect.objectContaining({ isPublished: 1, slug: "maker-portfolio" }));
+    expect(updateWhere).toHaveBeenCalledTimes(1);
+    expect(result).toMatchObject({ id: 71, isPublished: true, slug: "maker-portfolio" });
+  });
+
+  it("returns a published portfolio from the public slug procedure", async () => {
+    const select = vi.fn(() => ({ from: vi.fn(() => ({ where: vi.fn(() => ({ limit: vi.fn(async () => [{ ...baseRow, isPublished: 1, publishedAt: new Date() }]) })) })) }));
+    vi.mocked(getDb).mockResolvedValue({ select } as never);
+
+    const caller = appRouter.createCaller(createContext());
+    await expect(caller.publicPortfolio.bySlug({ slug: "maker-portfolio" })).resolves.toMatchObject({ id: 71, isPublished: true, slug: "maker-portfolio" });
+  });
+});

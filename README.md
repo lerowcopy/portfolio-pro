@@ -41,7 +41,7 @@ pnpm check
 pnpm test
 ```
 
-The current test suite verifies slug transliteration and sanitization, image signature validation, OAuth logout behavior, and that protected portfolio operations reject access without ownership.
+The current 23-test suite verifies slug transliteration and sanitization, image signature validation, OAuth logout behavior, protected ownership checks, successful portfolio publication, public-slug retrieval, and the semantic rendering of all seven template components.
 
 ## Product flows
 
