@@ -81,9 +81,14 @@ pnpm add @supabase/supabase-js @supabase/ssr \
   @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities \
   lucide-react framer-motion resend
 
+# Одобрить build scripts только известных transitive dependencies Next.js/Tailwind.
+pnpm approve-builds
+
 pnpm exec next --version
 pnpm build
 ```
+
+При выполнении `pnpm approve-builds` используйте пробел, чтобы выбрать **только** `@tailwindcss/oxide` и `esbuild`, затем нажмите Enter. Это ожидаемые build-time dependencies для созданного Next.js/Tailwind проекта. Если pnpm показывает любое незнакомое имя, не одобряйте его: выйдите из выбора и сначала проверьте dependency tree. После одобрения повторно выполните `pnpm build`.
 
 Команда `pnpm exec next --version` должна вывести версию `14.x`. После успешного `pnpm build` откройте **Source Control**, добавьте все созданные файлы, введите commit message `Initialize Next.js 14 external application`, затем нажмите **Commit** и **Sync Changes**. GitHub документирует этот browser flow для commit/push и private repositories. [1]
 
