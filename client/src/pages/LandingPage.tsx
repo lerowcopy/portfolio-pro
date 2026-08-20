@@ -11,7 +11,7 @@ import { isExternalRuntime } from "@/lib/externalRuntime";
 const features = [
   { icon: LayoutPanelTop, title: "Four considered layouts", text: "Minimal, Gallery, Cards, and Blog — each calibrated for a different creative voice." },
   { icon: Palette, title: "Your visual language", text: "Fine-tune colour, typography, biography, and social links without touching a line of code." },
-  { icon: Sparkles, title: "Always current", text: "See edits reflected instantly, then let autosave quietly keep every thoughtful detail." },
+  { icon: Sparkles, title: "Always in control", text: "See edits reflected instantly, review them with confidence, and save when you are ready." },
 ];
 
 function MiniPortfolio() {
