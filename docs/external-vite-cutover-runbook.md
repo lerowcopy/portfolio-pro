@@ -31,6 +31,8 @@ Create a Railway service from this repository. Use the committed configuration a
 
 Railway uses `pnpm build:railway` and `pnpm start:railway` from the committed manifest. Before connecting Vercel, verify `https://<railway-domain>/healthz` returns `{"ok":true,"runtime":"external"}`.
 
+> External Supabase runtime requires **Node.js 22**. This is pinned by the committed `engines.node` range; Railway must build a new deployment after this change.
+
 ## 3. Vercel SPA service
 
 Import the same repository into a separate Vercel project and choose the **Other** framework preset. The committed `vercel.json` runs `pnpm build:vercel:spa`, publishes `dist/public`, routes browser history paths to `index.html`, and keeps the filesystem function `api/trpc/[...path].ts` available before the SPA fallback.

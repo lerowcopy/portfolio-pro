@@ -40,6 +40,7 @@ Supabase secret key является server-only credential: она не дол�
 
 6. **Не создавайте** `PORT`: Railway передаёт порт приложению автоматически, а committed entrypoint его использует. Не добавляйте Manus OAuth, MySQL, `VITE_*` или Stripe variables в Railway external API.
 7. Нажмите **Deploy**. Railway использует committed `railway.json`: build `pnpm run build:railway`, start `pnpm run start:railway`, healthcheck `/healthz`.
+   Репозиторий фиксирует для этого runtime Node.js 22 через `package.json`; после изменения runtime-requirement Railway должен выполнить новый deployment.
 8. После успешного deployment откройте service → **Settings** → **Networking** → **Generate Domain**. Скопируйте появившийся `https://…up.railway.app` URL.
 9. В новой вкладке откройте `<ваш-railway-url>/healthz`. Ожидаемый JSON:
 

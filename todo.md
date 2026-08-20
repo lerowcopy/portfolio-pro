@@ -72,9 +72,18 @@
 - [x] Add Vercel Vite SPA fallback, same-origin Railway tRPC serverless proxy, environment contract and unit coverage
 - [x] Verify external build/security boundaries and update deployment documentation for Vercel, Railway, and Supabase
 - [ ] Complete live Vercel/Railway/Supabase acceptance from docs/external-vite-cutover-runbook.md, including a real Supabase session and cross-user authorization verification
+- [ ] Diagnose and fix the live authenticated external portfolio list failure after successful Supabase sign-in
+- [ ] Correlate live portfolios.list 500 request trace with Railway application error details
+- [ ] Verify Railway SUPABASE_DATABASE_URL uses the current Supabase Session Pooler URI with a correctly encoded password
+- [ ] Recover valid Railway Session Pooler URI formatting after database address validation failure
+- [ ] Correct Vercel VITE_SUPABASE_URL to the HTTPS Supabase project URL and redeploy browser bundle
+- [ ] Pin Railway external API builds to Node.js 22 to satisfy Supabase runtime requirements
+- [x] Pin Railway external API builds to Node.js 22 and verify TypeScript plus Railway production build
+- [x] Verify live external Supabase sign-up route after configured Site URL and redirect URL
 - [ ] Guide and verify initial browser-only Railway and Vercel deployment for the external runtime
-- [ ] Verify live Vercel SPA at https://portfolio-pro-virid.vercel.app and its same-origin Railway tRPC proxy
-- [ ] Fix live Vercel API route 404 so /api/trpc/* reaches the Railway proxy before SPA fallback
+- [x] Verify live Vercel SPA at https://portfolio-pro-virid.vercel.app and its same-origin Railway tRPC proxy
+- [x] Fix live Vercel API route 404 so /api/trpc/* reaches the Railway proxy before SPA fallback
+- [x] Recheck live Vercel tRPC proxy after user-confirmed routing-fix redeploy
 - [x] Exclude /api paths from the Vercel SPA fallback and verify proxy routing test plus SPA build
 - [x] Diagnose and recover the initial Railway public health endpoint deployment failure
 - [x] Verify the Railway generated public domain and health endpoint URL after successful container startup
