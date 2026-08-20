@@ -8,7 +8,7 @@
 - [x] Build responsive two-column portfolio editor with real-time local preview
 - [x] Implement Minimal, Gallery, Cards, and Blog preview templates with CSS variables
 - [x] Implement form validation, Cyrillic slug generation, template controls, and social links editor
-- [x] Implement 30-second autosave, manual save, four-state status toast, and unsaved-changes guard
+- [x] Superseded: replace 30-second autosave with explicit save controls, local live preview, and an unsaved-changes guard
 - [x] Build public published portfolio route and server-side HTTP 404 handling for drafts or unknown slugs
 - [x] Add responsive dark-mode-ready visual polish and motion with reduced-motion support
 - [x] Add Vitest coverage for slug generation and protected portfolio procedures, including list/create/remove ownership scopes
@@ -80,6 +80,9 @@
 - [ ] Diagnose and fix external editor template and color scheme selection persistence and preview updates
 - [ ] Fix external Dashboard Updated invalid date by normalizing PostgreSQL timestamps to camelCase client fields
 - [x] Normalize external createdAt/updatedAt response fields and verify Dashboard timestamp contract in router tests
+- [x] Replace editor autosave with a persistent unsaved-changes bar providing Cancel and Save actions without network requests for live preview
+- [x] Preserve independent saved avatar/logo storage paths so Cancel restores the last saved image references safely
+- [x] Add regression coverage for dirty-bar states, explicit Save/Cancel actions, and removal of interval and visibility autosave
 - [x] Normalize external PostgreSQL template, color scheme and font family fields to client camelCase contract with router regression coverage
 - [x] Implement and verify external editor auth hydration guard with unit coverage and Vercel build
 - [x] Remove production analytics placeholders and verify no VITE analytics tokens remain in Vercel build
