@@ -2,13 +2,20 @@
 
 ## Назначение
 
-Файл `supabase/migrations/20260820000100_portfolio_pro_initial.sql` — это **новая внешняя schema**, а не изменение текущей managed MySQL базы Manus. Он переводит ownership на UUID, связанные с `auth.users.id`, и добавляет RLS policies для profiles, portfolio и portfolio projects.
+Файл `supabase/migrations/20260820000100_portfolio_pro_initial.sql` — это **новая внешняя schema**, а не изменение текущей managed MySQL базы Manus. Для уже созданного Supabase project используется `20260820000200_reconcile_existing_portfolio_schema.sql`: он не удаляет и не пересоздаёт существующие tables, а добавляет требуемые поля, индексы, trigger и hardened RLS policies.
 
 > Не запускайте migration в текущей Manus database. Применяйте её только к новому Supabase project после создания backup и проверки в staging environment.
 
 ## Применение
 
-Создайте отдельный Supabase project, затем в SQL Editor либо в CI migration workflow примените файл из `supabase/migrations/`. После этого запустите policy baseline из `supabase/tests/0001_portfolio_rls.test.sql` в local Supabase environment. Database policy tests должны быть расширены вместе с каждой новой таблицей и каждым новым RLS rule.
+После настройки `SUPABASE_DATABASE_URL` используйте контролируемые команды из корня repository:
+
+```bash
+pnpm supabase:migrate
+pnpm supabase:verify
+```
+
+Первая команда записывает SHA-256 checksum migration в private schema и не применит повторно файл с тем же именем и другим содержимым. Вторая команда проверяет наличие ожидаемых tables, включённого RLS и каждого named policy. После этого запускайте policy baseline из `supabase/tests/0001_portfolio_rls.test.sql` в local Supabase environment с pgTAP. Database policy tests должны быть расширены вместе с каждой новой таблицей и каждым новым RLS rule.
 
 ## Гарантии схемы
 
@@ -22,7 +29,7 @@
 
 ## Данные из текущего проекта
 
-Автоматическая загрузка current MySQL data не включена. Перед cutover подготовьте отдельную controlled import job, который сопоставит Manus `users.openId` с новым Supabase `auth.users.id`. Нельзя переносить data простым SQL copy: прежние числовые user IDs и UUID Supabase не совместимы.
+Автоматическая загрузка current MySQL data не включена. Перед cutover подготовьте отдельную controlled import job, который сопоставит Manus `users.openId` с новым Supabase `auth.users.id`. Нельзя переносить data простым SQL copy: прежние числовые user IDs и UUID Supabase не совместимы. В подключённом Supabase project reconciliation migration сохранила текущие tables и records: она не выполняет `drop table`, `truncate`, `delete` или column rename.
 
 ## Следующий этап
 

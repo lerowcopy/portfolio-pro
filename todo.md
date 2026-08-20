@@ -42,6 +42,12 @@
 - [x] Extract a deployment-neutral Express app and Railway entrypoint without removing the current Manus runtime
 - [x] Design a separate Supabase PostgreSQL schema and migration plan with UUID user ownership
 - [ ] Apply the prepared Supabase PostgreSQL migration and execute RLS policy tests after a Supabase environment is connected
+- [x] Apply the user-approved Supabase migration and capture schema/RLS verification evidence
+- [x] Revalidate the corrected Supabase pooler connection before applying schema changes
+- [x] Validate the latest user-updated Supabase pooler URI before database changes
+- [x] Reconcile the existing Supabase portfolios schema and policies without destructive table replacement
+- [x] Apply the approved non-destructive Supabase reconciliation migration and verify schema/RLS contract
+- [x] Audit post-migration Supabase record counts without exposing user content
 - [ ] Replace Manus OAuth with Supabase Auth, update client token transport, and verify cross-user authorization
 - [ ] Replace Manus storage with Supabase Storage and protected upload policies
 - [ ] Add Vercel Vite SPA configuration, same-origin Railway API rewrites, and external environment contracts

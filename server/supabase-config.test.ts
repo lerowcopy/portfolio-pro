@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
+import pg from "pg";
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
+const supabaseDatabaseUrl = process.env.SUPABASE_DATABASE_URL;
 
 describe("Supabase server configuration", () => {
   it("accepts the configured secret key on a lightweight REST capability endpoint", async () => {
@@ -15,5 +17,18 @@ describe("Supabase server configuration", () => {
     });
 
     expect(response.status, "Supabase secret key must authorize the REST capability endpoint").toBe(200);
+  }, 15_000);
+
+  it("connects to the configured PostgreSQL pooler without exposing the connection string", async () => {
+    expect(supabaseDatabaseUrl, "SUPABASE_DATABASE_URL must be configured").toBeTruthy();
+
+    const client = new pg.Client({ connectionString: supabaseDatabaseUrl });
+    try {
+      await client.connect();
+      const result = await client.query("select 1 as connected");
+      expect(result.rows).toEqual([{ connected: 1 }]);
+    } finally {
+      await client.end();
+    }
   }, 15_000);
 });

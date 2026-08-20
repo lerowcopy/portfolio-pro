@@ -6,7 +6,7 @@ values
   ('11111111-1111-1111-1111-111111111111', 'owner@example.test'),
   ('22222222-2222-2222-2222-222222222222', 'other@example.test');
 
-insert into public.portfolios (id, owner_id, title, bio, slug, is_published)
+insert into public.portfolios (id, user_id, title, bio, slug, is_published)
 values
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', 'Draft', 'Private portfolio', 'owner-draft', false),
   ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '11111111-1111-1111-1111-111111111111', 'Public', 'Published portfolio', 'owner-public', true);
@@ -45,7 +45,7 @@ select is_empty(
 
 set local role anon;
 select throws_ok(
-  $$insert into public.portfolios (owner_id, title, bio, slug) values ('11111111-1111-1111-1111-111111111111', 'Bad', 'Bad', 'anon-write')$$,
+  $$insert into public.portfolios (user_id, title, bio, slug) values ('11111111-1111-1111-1111-111111111111', 'Bad', 'Bad', 'anon-write')$$,
   '42501',
   null,
   'Anonymous visitors cannot create portfolios'
