@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ownedPortfolioQuery, ownedProjectQuery } from "./portfolioQueries";
+import { ownedPortfolioQuery, ownedProjectListQuery, ownedProjectQuery } from "./portfolioQueries";
 
 describe("external portfolio SQL ownership queries", () => {
   it("uses parameterized UUID owner checks", () => {
@@ -12,5 +12,13 @@ describe("external portfolio SQL ownership queries", () => {
     const query = ownedProjectQuery("550e8400-e29b-41d4-a716-446655440000", "550e8400-e29b-41d4-a716-446655440001", "550e8400-e29b-41d4-a716-446655440002");
     expect(query.text).toContain("join public.portfolios");
     expect(query.text).toContain("f.user_id = $3::uuid");
+  });
+
+  it("scopes project lists through parent portfolio ownership", () => {
+    const query = ownedProjectListQuery("550e8400-e29b-41d4-a716-446655440000", "550e8400-e29b-41d4-a716-446655440002", "mobile", 12, 0);
+    expect(query.text).toContain("f.user_id = $2::uuid");
+    expect(query.text).toContain("order by p.sort_order asc");
+    expect(query.text).toContain("p.title ilike");
+    expect(query.values).toEqual(["550e8400-e29b-41d4-a716-446655440000", "550e8400-e29b-41d4-a716-446655440002", "mobile", 12, 0]);
   });
 });

@@ -1,16 +1,11 @@
 import express, { type Express } from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import type { Server } from "http";
-import { and, eq } from "drizzle-orm";
-import { portfolios } from "../drizzle/schema";
-import { registerOAuthRoutes } from "./_core/oauth";
-import { registerStorageProxy } from "./_core/storageProxy";
-import { createContext } from "./_core/context";
-import { createExternalFoundationContext } from "./external/context";
+import { createExternalContext } from "./external/externalContext";
+import { externalAppRouter } from "./external/externalRouter";
+import { getPublishedExternalPortfolioBySlug } from "./external/portfolioRepository";
+import { externalSlugify } from "./external/externalSlug";
 import { serveStatic, setupVite } from "./_core/vite";
-import { getDb } from "./db";
-import { slugify } from "./portfolio";
-import { appRouter } from "./routers";
 
 export type ApplicationRuntime = "manus" | "external";
 
@@ -62,38 +57,66 @@ export async function createPortfolioApp(options: CreatePortfolioAppOptions): Pr
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
   if (options.runtime === "manus") {
+    const [{ registerOAuthRoutes }, { registerStorageProxy }] = await Promise.all([
+      import("./_core/oauth"),
+      import("./_core/storageProxy"),
+    ]);
     registerStorageProxy(app);
     registerOAuthRoutes(app);
   }
 
-  app.use(
-    "/api/trpc",
-    createExpressMiddleware({
-      router: appRouter,
-      createContext: options.runtime === "manus" ? createContext : createExternalFoundationContext,
-    })
-  );
+  if (options.runtime === "manus") {
+    const [{ createContext }, { appRouter }] = await Promise.all([
+      import("./_core/context"),
+      import("./routers"),
+    ]);
+    app.use("/api/trpc", createExpressMiddleware({ router: appRouter, createContext }));
+  } else {
+    app.use("/api/trpc", createExpressMiddleware({ router: externalAppRouter, createContext: createExternalContext }));
+  }
 
-  // Проверка выполняется до SPA fallback, чтобы draft и неизвестный slug отдавали HTTP 404.
-  app.get("/:slug", async (req, res, next) => {
-    const slug = req.params.slug;
-    if (!isPublicSlugCandidate(slug)) return next();
+  if (options.serveFrontend && options.runtime === "manus") {
+    const [{ and, eq }, { portfolios }, { getDb }, { slugify }] = await Promise.all([
+      import("drizzle-orm"),
+      import("../drizzle/schema"),
+      import("./db"),
+      import("./portfolio"),
+    ]);
+    app.get("/:slug", async (req, res, next) => {
+      const slug = req.params.slug;
+      if (!isPublicSlugCandidate(slug)) return next();
 
-    try {
-      const db = await getDb();
-      if (!db) return next();
-      const result = await db
-        .select({ id: portfolios.id })
-        .from(portfolios)
-        .where(and(eq(portfolios.slug, slugify(slug)), eq(portfolios.isPublished, 1)))
-        .limit(1);
+      try {
+        const db = await getDb();
+        if (!db) return next();
+        const result = await db
+          .select({ id: portfolios.id })
+          .from(portfolios)
+          .where(and(eq(portfolios.slug, slugify(slug)), eq(portfolios.isPublished, 1)))
+          .limit(1);
 
-      if (result.length === 0) return sendPublicNotFound(res);
-      return next();
-    } catch (error) {
-      return next(error);
-    }
-  });
+        if (result.length === 0) return sendPublicNotFound(res);
+        return next();
+      } catch (error) {
+        return next(error);
+      }
+    });
+  }
+
+  if (options.serveFrontend && options.runtime === "external") {
+    app.get("/:slug", async (req, res, next) => {
+      const slug = req.params.slug;
+      if (!isPublicSlugCandidate(slug)) return next();
+
+      try {
+        const portfolio = await getPublishedExternalPortfolioBySlug(externalSlugify(slug));
+        if (!portfolio) return sendPublicNotFound(res);
+        return next();
+      } catch (error) {
+        return next(error);
+      }
+    });
+  }
 
   if (!options.serveFrontend) {
     app.use((_req, res) => {

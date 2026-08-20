@@ -56,6 +56,9 @@ PUBLIC_APP_URL=https://your-domain.example
 # service-role key — строго server-only.
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=replace_with_public_anon_or_publishable_key
+# Railway Storage adapter читает сначала SUPABASE_SECRET_KEY,
+# а SUPABASE_SERVICE_ROLE_KEY поддерживается для совместимости.
+SUPABASE_SECRET_KEY=replace_with_server_only_supabase_secret_key
 SUPABASE_SERVICE_ROLE_KEY=replace_with_server_only_service_role_key
 
 # FreeKassa — строго server-only. Не используйте VITE_ префикс.
@@ -77,7 +80,7 @@ RESEND_FROM_EMAIL=Portfolio Pro <noreply@your-domain.example>
 
 | Сервис | Production placement | Нельзя раскрывать |
 |---|---|---|
-| Supabase | Vercel Environment Variables; `VITE_SUPABASE_*` — только публичные URL/key | `SUPABASE_SERVICE_ROLE_KEY` |
+| Supabase | Vercel Environment Variables; `VITE_SUPABASE_*` — только публичные URL/key | `SUPABASE_SECRET_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
 | FreeKassa | Только server-side Vercel Environment Variables | API key, Secret Word 1, Secret Word 2, `CRON_SECRET` |
 | Resend | Только server-side Vercel Environment Variables | `RESEND_API_KEY` |
 

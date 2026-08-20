@@ -11,7 +11,7 @@ export type PortfolioFontFamily = (typeof portfolioFontFamilies)[number];
 export type SocialPlatform = (typeof socialPlatforms)[number];
 
 const portfolioImageUrl = z.string().max(1000).refine(
-  (value) => value === "" || value.startsWith("/manus-storage/") || value.startsWith("https://") || value.startsWith("/"),
+  (value) => value === "" || value.startsWith("/manus-storage/") || value.startsWith("https://") || value.startsWith("storage://") || value.startsWith("/"),
   "Некорректный URL изображения.",
 );
 

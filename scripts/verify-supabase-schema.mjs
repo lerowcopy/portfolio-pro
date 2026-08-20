@@ -22,6 +22,8 @@ const expectedPolicies = [
   "Owners can update project records",
   "Owners can delete project records",
 ];
+const expectedStorageBuckets = ["portfolio-avatars", "portfolio-logos", "portfolio-project-images"];
+const expectedStoragePolicy = "Portfolio Pro owners manage private media";
 
 const expectedColumns = ["role", "services", "posts", "contact_email", "slug_manually_edited"];
 
@@ -60,6 +62,24 @@ try {
 
   if (missingPolicies.length > 0) {
     throw new Error(`Missing expected RLS policies: ${missingPolicies.join(", ")}`);
+  }
+
+  const storageBuckets = await client.query(
+    "select id, public from storage.buckets where id = any($1::text[])",
+    [expectedStorageBuckets]
+  );
+  const actualStorageBuckets = new Set(storageBuckets.rows.map(row => row.id));
+  const missingStorageBuckets = expectedStorageBuckets.filter(name => !actualStorageBuckets.has(name));
+  if (missingStorageBuckets.length > 0 || storageBuckets.rows.some(row => row.public)) {
+    throw new Error(`Storage buckets are missing or public: ${missingStorageBuckets.join(", ") || "unexpected public bucket"}`);
+  }
+
+  const storagePolicy = await client.query(
+    "select policyname from pg_policies where schemaname = 'storage' and tablename = 'objects' and policyname = $1",
+    [expectedStoragePolicy]
+  );
+  if (storagePolicy.rowCount !== 1) {
+    throw new Error("Missing expected private Storage ownership policy");
   }
 
   const columns = await client.query(
