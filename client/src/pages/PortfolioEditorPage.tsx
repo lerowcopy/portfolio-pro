@@ -14,8 +14,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { isExternalRuntime } from "@/lib/externalRuntime";
 import { trpc } from "@/lib/trpc";
+import { isExternalRuntime } from "@/lib/externalRuntime";
+import { shouldRedirectUnauthenticatedRoute } from "@/lib/authRouteGuard";
 import { portfolioColorSchemes, portfolioFontFamilies, portfolioInputSchema, portfolioTemplates, socialPlatforms, type PortfolioInput, type SocialPlatform } from "@shared/portfolio";
 
 const AUTOSAVE_MS = 30_000;
@@ -33,9 +34,10 @@ export default function PortfolioEditorPage() {
   const [, params] = useRoute("/dashboard/portfolios/:id/edit");
   const id = isExternalRuntime ? params?.id ?? "" : Number(params?.id);
   const [, setLocation] = useLocation();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const query = trpc.portfolios.get.useQuery({ id: id as never }, { enabled: isAuthenticated && (isExternalRuntime ? Boolean(id) : Number.isInteger(id) && Number(id) > 0) });
-  useEffect(() => { if (!isAuthenticated) setLocation("/dashboard"); }, [isAuthenticated, setLocation]);
+  useEffect(() => { if (shouldRedirectUnauthenticatedRoute(loading, isAuthenticated)) setLocation("/dashboard"); }, [isAuthenticated, loading, setLocation]);
+  if (loading) return <div className="grid min-h-svh place-items-center"><Loader2 className="size-5 animate-spin text-violet-600" /></div>;
   if (!isAuthenticated) return null;
   if (query.isLoading) return <div className="grid min-h-svh place-items-center"><Loader2 className="size-5 animate-spin text-violet-600" /></div>;
   if (query.error || !query.data) return <div className="grid min-h-svh place-items-center p-6 text-center"><div><p className="text-sm text-slate-500">This portfolio could not be found.</p><Button asChild className="mt-4 rounded-full"><Link href="/dashboard">Back to dashboard</Link></Button></div></div>;

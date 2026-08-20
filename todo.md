@@ -76,6 +76,8 @@
 - [ ] Diagnose and fix live external portfolio create redirect and UUID editor-route access
 - [ ] Fix production analytics placeholder request caused by unset VITE_ANALYTICS_ENDPOINT
 - [ ] Diagnose external portfolios.get editor request using the verified live UUID from portfolios.list
+- [ ] Fix premature external auth redirect while Supabase session hydration is still loading on editor deep-links
+- [x] Implement and verify external editor auth hydration guard with unit coverage and Vercel build
 - [x] Remove production analytics placeholders and verify no VITE analytics tokens remain in Vercel build
 - [x] Implement and verify external full-page UUID editor navigation for portfolio create and card open
 - [x] Implement and verify UUID-safe client editor path creation with explicit redirect error handling
