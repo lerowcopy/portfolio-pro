@@ -50,6 +50,20 @@
 - [x] Audit post-migration Supabase record counts without exposing user content
 - [ ] Replace Manus OAuth with Supabase Auth, update client token transport, and verify cross-user authorization
 - [ ] Implement a PostgreSQL tRPC data router for UUID Supabase identities before switching the external client to Supabase Auth
+- [ ] Execute the user-approved UUID-safe PostgreSQL data-router cutover for Railway API
+- [ ] Complete the confirmed external UUID data layer and ownership test suite before client cutover
+- [ ] Build and verify the confirmed PostgreSQL UUID portfolio and project router implementation
+- [ ] Complete the confirmed UUID CRUD router and ownership test cutover in the next implementation pass
+- [ ] Execute the user-confirmed full UUID CRUD router and ownership test cutover
+- [ ] Implement the isolated PostgreSQL UUID CRUD router and Auth ownership boundary before client cutover
+- [ ] Continue the confirmed server-side PostgreSQL UUID CRUD layer implementation
+- [ ] Complete the user-confirmed UUID CRUD ownership and security verification before external client cutover
+- [ ] Continue UUID CRUD router verification without pausing before the next checkpoint
+- [ ] Complete the user-approved UUID CRUD router verification before the next checkpoint
+- [ ] Execute the confirmed server-side UUID CRUD router stage without UI cutover
+- [ ] Build the confirmed parameterized PostgreSQL portfolio/project CRUD router and ownership test suite
+- [ ] Execute agreed external migration stages autonomously and report only checkpoints or blockers
+- [ ] Continue the user-approved isolated UUID CRUD router migration without intermediate client cutover
 - [ ] Replace Manus storage with Supabase Storage and protected upload policies
 - [ ] Add Vercel Vite SPA configuration, same-origin Railway API rewrites, and external environment contracts
 - [ ] Verify external build/security boundaries and update deployment documentation for Vercel, Railway, and Supabase
