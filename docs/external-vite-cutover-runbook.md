@@ -43,7 +43,7 @@ Import the same repository into a separate Vercel project and choose the **Other
 | `RAILWAY_API_URL` | Production and Preview | Railway HTTPS deployment origin, without trailing slash |
 | `VITE_API_URL` | Omit | Leave unset when using the committed same-origin proxy. |
 
-Vercel rewrites preserve the browser URL, while this project’s API bridge uses a Vercel Function so the Railway origin remains server-only [3]. The proxy forwards only the required tRPC and Authorization headers, has an 8 MiB request limit, disables response caching, and does not return internal upstream details.
+The SPA fallback deliberately excludes `/api` paths, while the API bridge uses a Vercel Function so the Railway origin remains server-only [3]. The proxy forwards only the required tRPC and Authorization headers, has an 8 MiB request limit, disables response caching, and does not return internal upstream details.
 
 ## 4. Acceptance sequence
 

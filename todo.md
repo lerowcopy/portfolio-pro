@@ -73,6 +73,12 @@
 - [x] Verify external build/security boundaries and update deployment documentation for Vercel, Railway, and Supabase
 - [ ] Complete live Vercel/Railway/Supabase acceptance from docs/external-vite-cutover-runbook.md, including a real Supabase session and cross-user authorization verification
 - [ ] Guide and verify initial browser-only Railway and Vercel deployment for the external runtime
+- [ ] Verify live Vercel SPA at https://portfolio-pro-virid.vercel.app and its same-origin Railway tRPC proxy
+- [ ] Fix live Vercel API route 404 so /api/trpc/* reaches the Railway proxy before SPA fallback
+- [x] Exclude /api paths from the Vercel SPA fallback and verify proxy routing test plus SPA build
+- [x] Diagnose and recover the initial Railway public health endpoint deployment failure
+- [x] Verify the Railway generated public domain and health endpoint URL after successful container startup
+- [x] Verify live Railway health endpoint https://portfolio-pro-production-113c.up.railway.app/healthz and diagnose any public routing discrepancy
 - [x] Provide a first-time browser-only Railway and Vercel account setup guide using the prepared Supabase project
 - [x] Add normalized portfolio_projects schema with title, description, images, URL, tags, dates, sort order, and portfolio ownership
 - [x] Add server-side project CRUD, image upload, and reorder procedures with ownership and file validation

@@ -13,6 +13,6 @@ describe("Vercel SPA and API routing contract", () => {
     const parsed = JSON.parse(config) as { outputDirectory?: string; rewrites?: Array<{ source: string; destination: string }> };
     expect(apiRoute).toBeUndefined();
     expect(parsed.outputDirectory).toBe("dist/public");
-    expect(parsed.rewrites).toEqual([{ source: "/(.*)", destination: "/index.html" }]);
+    expect(parsed.rewrites).toEqual([{ source: "/((?!api(?:/|$)).*)", destination: "/index.html" }]);
   });
 });
