@@ -72,13 +72,13 @@
 - [x] Add Vercel Vite SPA fallback, same-origin Railway tRPC serverless proxy, environment contract and unit coverage
 - [x] Verify external build/security boundaries and update deployment documentation for Vercel, Railway, and Supabase
 - [ ] Complete live Vercel/Railway/Supabase acceptance from docs/external-vite-cutover-runbook.md, including a real Supabase session and cross-user authorization verification
-- [ ] Diagnose and fix the live authenticated external portfolio list failure after successful Supabase sign-in
-- [ ] Diagnose and fix live external portfolio create redirect and UUID editor-route access
-- [ ] Fix production analytics placeholder request caused by unset VITE_ANALYTICS_ENDPOINT
-- [ ] Diagnose external portfolios.get editor request using the verified live UUID from portfolios.list
-- [ ] Fix premature external auth redirect while Supabase session hydration is still loading on editor deep-links
-- [ ] Diagnose and fix external editor template and color scheme selection persistence and preview updates
-- [ ] Fix external Dashboard Updated invalid date by normalizing PostgreSQL timestamps to camelCase client fields
+- [x] Diagnose and fix the live authenticated external portfolio list failure after successful Supabase sign-in
+- [x] Diagnose and fix live external portfolio create redirect and UUID editor-route access
+- [x] Fix production analytics placeholder request caused by unset VITE_ANALYTICS_ENDPOINT
+- [x] Diagnose external portfolios.get editor request using the verified live UUID from portfolios.list
+- [x] Fix premature external auth redirect while Supabase session hydration is still loading on editor deep-links
+- [x] Diagnose and fix external editor template and color scheme selection persistence and preview updates
+- [x] Fix external Dashboard Updated invalid date by normalizing PostgreSQL timestamps to camelCase client fields
 - [x] Normalize external createdAt/updatedAt response fields and verify Dashboard timestamp contract in router tests
 - [x] Replace editor autosave with a persistent unsaved-changes bar providing Cancel and Save actions without network requests for live preview
 - [x] Preserve independent saved avatar/logo storage paths so Cancel restores the last saved image references safely
@@ -88,17 +88,17 @@
 - [x] Remove production analytics placeholders and verify no VITE analytics tokens remain in Vercel build
 - [x] Implement and verify external full-page UUID editor navigation for portfolio create and card open
 - [x] Implement and verify UUID-safe client editor path creation with explicit redirect error handling
-- [ ] Correlate live portfolios.list 500 request trace with Railway application error details
+- [x] Correlate live portfolios.list 500 request trace with Railway application error details
 - [ ] Verify Railway SUPABASE_DATABASE_URL uses the current Supabase Session Pooler URI with a correctly encoded password
 - [ ] Recover valid Railway Session Pooler URI formatting after database address validation failure
 - [ ] Correct Vercel VITE_SUPABASE_URL to the HTTPS Supabase project URL and redeploy browser bundle
-- [ ] Pin Railway external API builds to Node.js 22 to satisfy Supabase runtime requirements
-- [ ] Fix Railway PostgreSQL TLS certificate-chain handling for Supabase Session Pooler
-- [ ] Apply a scoped Node pg TLS compatibility setting for the configured Supabase Session Pooler only
+- [x] Pin Railway external API builds to Node.js 22 to satisfy Supabase runtime requirements
+- [x] Fix Railway PostgreSQL TLS certificate-chain handling for Supabase Session Pooler
+- [x] Apply a scoped Node pg TLS compatibility setting for the configured Supabase Session Pooler only
 - [x] Apply and verify scoped Node pg TLS compatibility for the Supabase Session Pooler only
 - [x] Pin Railway external API builds to Node.js 22 and verify TypeScript plus Railway production build
 - [x] Verify live external Supabase sign-up route after configured Site URL and redirect URL
-- [ ] Guide and verify initial browser-only Railway and Vercel deployment for the external runtime
+- [x] Guide and verify initial browser-only Railway and Vercel deployment for the external runtime
 - [x] Verify live Vercel SPA at https://portfolio-pro-virid.vercel.app and its same-origin Railway tRPC proxy
 - [x] Fix live Vercel API route 404 so /api/trpc/* reaches the Railway proxy before SPA fallback
 - [x] Recheck live Vercel tRPC proxy after user-confirmed routing-fix redeploy
