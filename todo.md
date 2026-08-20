@@ -49,6 +49,7 @@
 - [x] Apply the approved non-destructive Supabase reconciliation migration and verify schema/RLS contract
 - [x] Audit post-migration Supabase record counts without exposing user content
 - [ ] Replace Manus OAuth with Supabase Auth, update client token transport, and verify cross-user authorization
+- [ ] Implement a PostgreSQL tRPC data router for UUID Supabase identities before switching the external client to Supabase Auth
 - [ ] Replace Manus storage with Supabase Storage and protected upload policies
 - [ ] Add Vercel Vite SPA configuration, same-origin Railway API rewrites, and external environment contracts
 - [ ] Verify external build/security boundaries and update deployment documentation for Vercel, Railway, and Supabase
