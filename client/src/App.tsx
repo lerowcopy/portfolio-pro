@@ -11,12 +11,15 @@ import PublicPortfolioPage from "./pages/PublicPortfolioPage";
 import ProjectFormPage from "./pages/ProjectFormPage";
 import ProjectsPage from "./pages/ProjectsPage";
 import TemplateGallery from "./pages/TemplateGallery";
+import ExternalAuthPage from "./pages/ExternalAuthPage";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={LandingPage} />
+      <Route path={"/auth/signin"}>{() => <ExternalAuthPage mode="signin" />}</Route>
+      <Route path={"/auth/signup"}>{() => <ExternalAuthPage mode="signup" />}</Route>
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/dashboard/portfolios/:id/edit"} component={PortfolioEditorPage} />
       <Route path={"/dashboard/portfolios/:id/projects/new"} component={ProjectFormPage} />

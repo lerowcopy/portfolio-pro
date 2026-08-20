@@ -8,7 +8,8 @@ import { requireExternalPortfolioOwner, uuidSchema } from "./ownership";
 import { getExternalPostgresPool } from "./postgres";
 import { getExternalPortfolio, getExternalProject, getPublishedExternalPortfolioBySlug, listExternalPortfolios, listExternalProjects, listPublishedExternalProjects } from "./portfolioRepository";
 import { createPortfolioQuery, createProjectQuery, deletePortfolioQuery, deleteProjectQuery, updatePortfolioQuery, updateProjectQuery } from "./portfolioWrites";
-import { createExternalSignedImageUrl, parseOwnedExternalStoragePath, uploadExternalImage } from "./supabaseStorage";
+import { recordExternalStorageCleanupFailure } from "./storageCleanupAudit";
+import { createExternalSignedImageUrl, deleteExternalImage, parseOwnedExternalStoragePath, uploadExternalImage } from "./supabaseStorage";
 
 type DatabaseRow = Record<string, unknown>;
 
@@ -74,6 +75,14 @@ function assertOwnedStorageReference(value: string, userId: string): void {
   } catch (error) {
     throw new TRPCError({ code: "BAD_REQUEST", message: error instanceof Error ? error.message : "Недопустимый путь к приватному файлу." });
   }
+}
+
+async function deleteUnreferencedExternalImages(previousValues: unknown[], nextValues: unknown[], userId: string): Promise<void> {
+  const nextPaths = new Set(nextValues.filter((value): value is string => typeof value === "string" && value.startsWith("storage://")));
+  const pathsToDelete = previousValues.filter((value): value is string => typeof value === "string" && value.startsWith("storage://") && !nextPaths.has(value));
+  const outcomes = await Promise.allSettled(pathsToDelete.map((path) => deleteExternalImage(path, userId)));
+  const auditOutcomes = await Promise.allSettled(outcomes.flatMap((outcome, index) => outcome.status === "rejected" ? [recordExternalStorageCleanupFailure(userId, pathsToDelete[index]!, outcome.reason)] : []));
+  if (auditOutcomes.some((outcome) => outcome.status === "rejected")) console.error("Не удалось зафиксировать очистку заменённого private Storage object.");
 }
 
 async function toClientProject(row: DatabaseRow, userId: string) {
@@ -167,6 +176,7 @@ export const externalAppRouter = router({
     }),
     update: protectedProcedure.input(portfolioIdSchema.extend({ values: externalPortfolioInputSchema })).mutation(async ({ ctx, input }) => {
       await requireExternalPortfolioOwner(input.id, ctx.user.id);
+      const previous = await getExternalPortfolio(input.id, ctx.user.id) as DatabaseRow | null;
       assertOwnedStorageReference(input.values.logoUrl, ctx.user.id);
       assertOwnedStorageReference(input.values.avatarUrl, ctx.user.id);
       const slug = await createUniqueExternalSlug(input.values.slugManuallyEdited ? input.values.slug : input.values.title, input.id);
@@ -174,12 +184,16 @@ export const externalAppRouter = router({
       const result = await getExternalPostgresPool().query(query.text, [...query.values]);
       const row = result.rows[0] as DatabaseRow | undefined;
       if (!row) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Не удалось сохранить портфолио." });
+      await deleteUnreferencedExternalImages([previous?.logo_path, previous?.avatar_path], [input.values.logoUrl, input.values.avatarUrl], ctx.user.id);
       return hydrateExternalPortfolio(row, ctx.user.id);
     }),
     remove: protectedProcedure.input(portfolioIdSchema).mutation(async ({ ctx, input }) => {
+      const previous = await getExternalPortfolio(input.id, ctx.user.id) as DatabaseRow | null;
+      const previousProjects = await listExternalProjects(input.id, ctx.user.id);
       const query = deletePortfolioQuery(input.id, ctx.user.id);
       const result = await getExternalPostgresPool().query(query.text, [...query.values]);
       requireMutationResult(result.rowCount, "Портфолио не найдено.");
+      await deleteUnreferencedExternalImages([previous?.logo_path, previous?.avatar_path, ...previousProjects.flatMap((project) => toJsonArray((project as DatabaseRow).image_paths))], [], ctx.user.id);
       return { success: true } as const;
     }),
     uploadImage: protectedProcedure.input(imageUploadSchema).mutation(({ ctx, input }) => uploadOwnedExternalImage(ctx.user.id, input.portfolioId, {
@@ -210,17 +224,21 @@ export const externalAppRouter = router({
       return toClientProject(row, ctx.user.id);
     }),
     update: protectedProcedure.input(projectIdSchema.extend({ values: externalProjectInputSchema })).mutation(async ({ ctx, input }) => {
+      const previous = await getExternalProject(input.projectId, input.portfolioId, ctx.user.id) as DatabaseRow | null;
       input.values.images.forEach((image) => assertOwnedStorageReference(image, ctx.user.id));
       const query = updateProjectQuery(input.projectId, input.portfolioId, ctx.user.id, input.values);
       const result = await getExternalPostgresPool().query(query.text, [...query.values]);
       const row = result.rows[0] as DatabaseRow | undefined;
       if (!row) throw new TRPCError({ code: "NOT_FOUND", message: "Проект не найден." });
+      await deleteUnreferencedExternalImages(toJsonArray(previous?.image_paths), input.values.images, ctx.user.id);
       return toClientProject(row, ctx.user.id);
     }),
     remove: protectedProcedure.input(projectIdSchema).mutation(async ({ ctx, input }) => {
+      const previous = await getExternalProject(input.projectId, input.portfolioId, ctx.user.id) as DatabaseRow | null;
       const query = deleteProjectQuery(input.projectId, input.portfolioId, ctx.user.id);
       const result = await getExternalPostgresPool().query(query.text, [...query.values]);
       requireMutationResult(result.rowCount, "Проект не найден.");
+      await deleteUnreferencedExternalImages(toJsonArray(previous?.image_paths), [], ctx.user.id);
       return { success: true } as const;
     }),
     reorder: protectedProcedure.input(z.object({ portfolioId: uuidSchema, ids: z.array(uuidSchema).min(1).max(100).refine((ids) => new Set(ids).size === ids.length, "Каждый проект должен присутствовать один раз.") })).mutation(async ({ ctx, input }) => {

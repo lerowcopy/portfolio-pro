@@ -51,6 +51,7 @@ STRIPE_SECRET_KEY=
 ```dotenv
 # Публичный origin внешнего deployment.
 PUBLIC_APP_URL=https://your-domain.example
+RAILWAY_API_URL=https://your-railway-service.up.railway.app
 
 # Supabase: публичные значения допустимы в client bundle,
 # service-role key — строго server-only.
@@ -81,6 +82,7 @@ RESEND_FROM_EMAIL=Portfolio Pro <noreply@your-domain.example>
 | Сервис | Production placement | Нельзя раскрывать |
 |---|---|---|
 | Supabase | Vercel Environment Variables; `VITE_SUPABASE_*` — только публичные URL/key | `SUPABASE_SECRET_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
+| Railway API | Vercel server-only Environment Variable для same-origin `/api/trpc` proxy | `RAILWAY_API_URL` |
 | FreeKassa | Только server-side Vercel Environment Variables | API key, Secret Word 1, Secret Word 2, `CRON_SECRET` |
 | Resend | Только server-side Vercel Environment Variables | `RESEND_API_KEY` |
 

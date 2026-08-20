@@ -24,6 +24,7 @@ const expectedPolicies = [
 ];
 const expectedStorageBuckets = ["portfolio-avatars", "portfolio-logos", "portfolio-project-images"];
 const expectedStoragePolicy = "Portfolio Pro owners manage private media";
+const expectedAuditTable = "storage_cleanup_tasks";
 
 const expectedColumns = ["role", "services", "posts", "contact_email", "slug_manually_edited"];
 
@@ -80,6 +81,14 @@ try {
   );
   if (storagePolicy.rowCount !== 1) {
     throw new Error("Missing expected private Storage ownership policy");
+  }
+
+  const cleanupAudit = await client.query(
+    "select tablename, rowsecurity from pg_tables where schemaname = 'public' and tablename = $1",
+    [expectedAuditTable]
+  );
+  if (cleanupAudit.rowCount !== 1 || cleanupAudit.rows[0].rowsecurity !== true) {
+    throw new Error("Missing expected protected Storage cleanup audit table");
   }
 
   const columns = await client.query(

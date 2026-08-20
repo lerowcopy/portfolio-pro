@@ -6,6 +6,8 @@ import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
 import { startLogin } from "./const";
+import { isExternalRuntime, getExternalTrpcUrl } from "./lib/externalRuntime";
+import { getSupabaseBrowserClient } from "./lib/supabase";
 import "./index.css";
 
 const queryClient = new QueryClient();
@@ -14,10 +16,14 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
 
-  const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
+  const isUnauthorized = error.message === UNAUTHED_ERR_MSG || error.data?.code === "UNAUTHORIZED";
 
   if (!isUnauthorized) return;
 
+  if (isExternalRuntime) {
+    window.location.href = "/auth/signin";
+    return;
+  }
   startLogin();
 };
 
@@ -40,9 +46,13 @@ queryClient.getMutationCache().subscribe(event => {
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: "/api/trpc",
+      url: isExternalRuntime ? getExternalTrpcUrl() : "/api/trpc",
       transformer: superjson,
-      headers() {
+      async headers() {
+        if (isExternalRuntime) {
+          const { data } = await getSupabaseBrowserClient().auth.getSession();
+          return data.session?.access_token ? { Authorization: `Bearer ${data.session.access_token}` } : {};
+        }
         // Preview auto-login fallback: when the browser blocks iframe cookies
         // (Safari ITP / private browsing / WebView), the runtime mirrors the
         // session into sessionStorage so we can forward it as a Bearer token.
@@ -65,7 +75,7 @@ const trpcClient = trpc.createClient({
       fetch(input, init) {
         return globalThis.fetch(input, {
           ...(init ?? {}),
-          credentials: "include",
+          credentials: isExternalRuntime ? "omit" : "include",
         });
       },
     }),

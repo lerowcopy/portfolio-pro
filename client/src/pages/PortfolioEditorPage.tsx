@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { isExternalRuntime } from "@/lib/externalRuntime";
 import { trpc } from "@/lib/trpc";
 import { portfolioColorSchemes, portfolioFontFamilies, portfolioInputSchema, portfolioTemplates, socialPlatforms, type PortfolioInput, type SocialPlatform } from "@shared/portfolio";
 
@@ -24,22 +25,25 @@ const templateLabels = { minimal: "Minimal", gallery: "Gallery", cards: "Cards",
 const colorLabels = { blue: "Blue", dark: "Dark", purple: "Purple", green: "Green", warm: "Warm" } as const;
 const fontLabels = { inter: "Inter", playfair: "Playfair", georgia: "Georgia" } as const;
 
+type ExternalPortfolioPayload = PortfolioInput & { logoStoragePath?: string; avatarStoragePath?: string };
+
 function toFormValues(portfolio: PortfolioInput): PortfolioInput { return { ...portfolio, projects: portfolio.projects ?? [], services: portfolio.services ?? [], posts: portfolio.posts ?? [], contactEmail: portfolio.contactEmail ?? "" }; }
 
 export default function PortfolioEditorPage() {
   const [, params] = useRoute("/dashboard/portfolios/:id/edit");
-  const id = Number(params?.id);
+  const id = isExternalRuntime ? params?.id ?? "" : Number(params?.id);
   const [, setLocation] = useLocation();
   const { isAuthenticated } = useAuth();
-  const query = trpc.portfolios.get.useQuery({ id }, { enabled: isAuthenticated && Number.isInteger(id) && id > 0 });
+  const query = trpc.portfolios.get.useQuery({ id: id as never }, { enabled: isAuthenticated && (isExternalRuntime ? Boolean(id) : Number.isInteger(id) && Number(id) > 0) });
   useEffect(() => { if (!isAuthenticated) setLocation("/dashboard"); }, [isAuthenticated, setLocation]);
   if (!isAuthenticated) return null;
   if (query.isLoading) return <div className="grid min-h-svh place-items-center"><Loader2 className="size-5 animate-spin text-violet-600" /></div>;
   if (query.error || !query.data) return <div className="grid min-h-svh place-items-center p-6 text-center"><div><p className="text-sm text-slate-500">This portfolio could not be found.</p><Button asChild className="mt-4 rounded-full"><Link href="/dashboard">Back to dashboard</Link></Button></div></div>;
-  return <PortfolioEditor portfolioId={id} initialValues={toFormValues(query.data)} />;
+  const initial = query.data as unknown as ExternalPortfolioPayload;
+  return <PortfolioEditor portfolioId={id} initialValues={toFormValues(initial)} initialStoragePaths={{ logo: initial.logoStoragePath ?? "", avatar: initial.avatarStoragePath ?? "" }} />;
 }
 
-function PortfolioEditor({ portfolioId, initialValues }: { portfolioId: number; initialValues: PortfolioInput }) {
+function PortfolioEditor({ portfolioId, initialValues, initialStoragePaths }: { portfolioId: string | number; initialValues: PortfolioInput; initialStoragePaths: { logo: string; avatar: string } }) {
   const [, setLocation] = useLocation();
   const form = useForm<PortfolioInput>({ resolver: zodResolver(portfolioInputSchema), defaultValues: initialValues, mode: "onTouched", reValidateMode: "onChange" });
   const watched = useWatch({ control: form.control }) as PortfolioInput;
@@ -48,6 +52,7 @@ function PortfolioEditor({ portfolioId, initialValues }: { portfolioId: number; 
   const [message, setMessage] = useState<string>();
   const [uploadingFields, setUploadingFields] = useState({ logo: false, avatar: false });
   const saving = useRef(false);
+  const storagePaths = useRef(initialStoragePaths);
   const utils = trpc.useUtils();
   const update = trpc.portfolios.update.useMutation();
   const upload = trpc.portfolios.uploadImage.useMutation();
@@ -63,12 +68,22 @@ function PortfolioEditor({ portfolioId, initialValues }: { portfolioId: number; 
     }
     if (!(await form.trigger())) { setStatus("error"); setMessage("Complete the highlighted fields before saving."); return; }
     saving.current = true; setStatus("saving"); setMessage(undefined);
-    try { const saved = await update.mutateAsync({ id: portfolioId, values: form.getValues() }); form.reset(toFormValues(saved)); await utils.portfolios.list.invalidate(); setStatus("saved"); }
+    try {
+      const displayedValues = form.getValues();
+      const values = isExternalRuntime ? { ...displayedValues, logoUrl: storagePaths.current.logo, avatarUrl: storagePaths.current.avatar } : displayedValues;
+      const saved = await update.mutateAsync({ id: portfolioId as never, values });
+      const externalSaved = saved as unknown as ExternalPortfolioPayload;
+      storagePaths.current = { logo: externalSaved.logoStoragePath ?? "", avatar: externalSaved.avatarStoragePath ?? "" };
+      form.reset(toFormValues(externalSaved));
+      await utils.portfolios.list.invalidate();
+      setStatus("saved");
+    }
     catch (error) { setStatus("error"); setMessage(error instanceof Error ? error.message : "Please check your connection and try again."); }
     finally { saving.current = false; }
   }, [form, portfolioId, update, uploadingFields, utils.portfolios.list]);
 
   useEffect(() => { if (form.formState.isDirty && !saving.current) setStatus("dirty"); }, [form.formState.isDirty]);
+  useEffect(() => { if (!watched.logoUrl) storagePaths.current.logo = ""; if (!watched.avatarUrl) storagePaths.current.avatar = ""; }, [watched.avatarUrl, watched.logoUrl]);
   useEffect(() => { const timer = window.setInterval(() => { void save(); }, AUTOSAVE_MS); return () => window.clearInterval(timer); }, [save]);
   useEffect(() => { if (!uploadingFields.logo && !uploadingFields.avatar && form.formState.isDirty) void save(); }, [form.formState.isDirty, save, uploadingFields]);
   useEffect(() => { const beforeUnload = (event: BeforeUnloadEvent) => { if (!form.formState.isDirty) return; event.preventDefault(); event.returnValue = ""; }; const visibility = () => { if (document.visibilityState === "hidden" && form.formState.isDirty) void save(); }; window.addEventListener("beforeunload", beforeUnload); document.addEventListener("visibilitychange", visibility); return () => { window.removeEventListener("beforeunload", beforeUnload); document.removeEventListener("visibilitychange", visibility); }; }, [form.formState.isDirty, save]);
@@ -80,7 +95,13 @@ function PortfolioEditor({ portfolioId, initialValues }: { portfolioId: number; 
     const localUrl = URL.createObjectURL(file); form.setValue(field, localUrl, { shouldDirty: true });
     const base64 = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result).split(",")[1] || ""); reader.onerror = () => reject(new Error("Could not read this image.")); reader.readAsDataURL(file); });
     setUploadingFields((current) => ({ ...current, [kind]: true }));
-    try { const result = await upload.mutateAsync({ portfolioId, kind, mimeType: file.type as "image/jpeg" | "image/png" | "image/webp", base64 }); form.setValue(field, result.url, { shouldDirty: true }); URL.revokeObjectURL(localUrl); }
+    try {
+      const result = await upload.mutateAsync({ portfolioId: portfolioId as never, kind, mimeType: file.type as "image/jpeg" | "image/png" | "image/webp", base64 }) as unknown as { url: string; storagePath?: string };
+      if (isExternalRuntime && !result.storagePath) throw new Error("Хранилище не вернуло защищённый путь изображения.");
+      storagePaths.current[kind] = result.storagePath ?? "";
+      form.setValue(field, result.url, { shouldDirty: true });
+      URL.revokeObjectURL(localUrl);
+    }
     catch (error) { form.setValue(field, previousUrl, { shouldDirty: true }); URL.revokeObjectURL(localUrl); throw error; }
     finally { setUploadingFields((current) => ({ ...current, [kind]: false })); }
   }

@@ -65,8 +65,12 @@
 - [ ] Execute agreed external migration stages autonomously and report only checkpoints or blockers
 - [ ] Continue the user-approved isolated UUID CRUD router migration without intermediate client cutover
 - [ ] Replace Manus storage with Supabase Storage and protected upload policies
+- [x] Implement external Supabase Storage foundation: private buckets/RLS, strict refs, signed delivery and mounted HTTP persistence test
+- [ ] Delete replaced and removed Supabase Storage objects safely during external portfolio/project image lifecycle
+- [x] Implement owner-scoped best-effort cleanup for replaced/removed external Storage objects with router unit tests
 - [ ] Add Vercel Vite SPA configuration, same-origin Railway API rewrites, and external environment contracts
-- [ ] Verify external build/security boundaries and update deployment documentation for Vercel, Railway, and Supabase
+- [x] Add Vercel Vite SPA fallback, same-origin Railway tRPC serverless proxy, environment contract and unit coverage
+- [x] Verify external build/security boundaries and update deployment documentation for Vercel, Railway, and Supabase
 - [x] Add normalized portfolio_projects schema with title, description, images, URL, tags, dates, sort order, and portfolio ownership
 - [x] Add server-side project CRUD, image upload, and reorder procedures with ownership and file validation
 - [x] Add project list route with search, pagination, optimistic delete, and reorder controls

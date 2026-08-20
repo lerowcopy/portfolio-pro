@@ -227,6 +227,21 @@ Stripe CLI выдаст отдельный локальный `whsec_...`, ко�
 
 Переносите в таком порядке: сначала database and RLS, затем Auth, storage uploads, portfolio/project CRUD, templates/public SSR, а потом Stripe. Billing не должен блокировать работу editor и project management на старте.
 
+## 7.1 Реализованный внешний путь для текущего Vite/Express репозитория
+
+Пока отдельная Next.js миграция не завершена, текущий репозиторий поддерживает самостоятельную внешнюю схему **Vercel SPA → Railway API → Supabase Auth/Postgres/Storage**. Она не включает SSR публичных маршрутов; это известный компромисс текущего Vite этапа, а не замена Next.js рекомендации выше.
+
+| Среда | Переменные | Назначение |
+|---|---|---|
+| Vercel | `VITE_EXTERNAL_RUNTIME=true`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` | Включает browser Supabase Auth и Bearer transport. |
+| Vercel | `RAILWAY_API_URL=https://<service>.up.railway.app` | Server-only значение для `/api/trpc/*` proxy; не имеет префикса `VITE_`. |
+| Railway | `SUPABASE_DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` | PostgreSQL pool, JWT validation и private Storage adapter. |
+| Railway | `PUBLIC_APP_URL=https://<vercel-domain>` | Разрешённый origin для внешнего API и Auth redirect configuration. |
+
+В `vercel.json` SPA fallback применяется после filesystem/API routes; поэтому `/api/trpc/*` попадает в Vercel Function `api/trpc/[...path].ts`, которая передаёт Authorization header на Railway, а клиент оставляет same-origin URL `/api/trpc`. Не задавайте `VITE_API_URL`, если используете этот proxy. Для режима прямого API URL переменная должна содержать только origin Railway без `/api/trpc`.
+
+External runtime хранит только opaque `storage://<bucket>/<user-uuid>/<object>` ссылки в Postgres. Railway выдаёт short-lived signed URL исключительно для отображения, а client editor сохраняет opaque ref отдельно от preview URL. Это исключает зависимость внешнего потока от Manus Storage.
+
 ## 8. Production checklist
 
 - [ ] GitHub repository is private; branch protection requires CI checks before merge.
@@ -251,3 +266,5 @@ Start the external repository from a clean Next.js App Router baseline rather th
 [3]: https://github.com/vercel/nextjs-subscription-payments "Vercel: Next.js Subscription Payments Starter"
 [4]: https://docs.stripe.com/webhooks "Stripe: Receive Stripe events in your webhook endpoint"
 [5]: https://vercel.com/templates/next.js/stripe-supabase-saas-starter-kit "Vercel: Stripe & Supabase SaaS Starter Kit"
+[6]: https://vercel.com/docs/routing/rewrites "Vercel: Rewrites"
+[7]: https://supabase.com/docs/guides/storage/security/access-control "Supabase: Storage Access Control"

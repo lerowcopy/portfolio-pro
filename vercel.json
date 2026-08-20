@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "buildCommand": "pnpm build:vercel:spa",
+  "outputDirectory": "dist/public",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

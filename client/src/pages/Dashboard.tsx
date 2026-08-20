@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { startLogin } from "@/const";
 import { trpc } from "@/lib/trpc";
+import { isExternalRuntime } from "@/lib/externalRuntime";
 
 export default function Dashboard() {
   const { user, loading, isAuthenticated, logout } = useAuth();
@@ -19,7 +20,7 @@ export default function Dashboard() {
   const remove = trpc.portfolios.remove.useMutation({ onSuccess: () => void utils.portfolios.list.invalidate() });
 
   if (loading) return <div className="grid min-h-svh place-items-center bg-[#fcfcfd] dark:bg-[#090a0f]"><Loader2 className="size-5 animate-spin text-violet-600" /></div>;
-  if (!isAuthenticated) return <div className="grid min-h-svh place-items-center bg-[#fcfcfd] p-6 dark:bg-[#090a0f]"><div className="max-w-sm text-center"><AppMark className="justify-center" /><h1 className="mt-8 font-display text-3xl font-semibold tracking-[-0.05em]">Your workspace awaits.</h1><p className="mt-3 text-sm leading-6 text-slate-500 dark:text-slate-400">Sign in to create and manage your published work.</p><Button onClick={() => startLogin()} className="mt-7 rounded-full bg-violet-700 px-5 text-white hover:bg-violet-800">Continue with Manus</Button></div></div>;
+  if (!isAuthenticated) return <div className="grid min-h-svh place-items-center bg-[#fcfcfd] p-6 dark:bg-[#090a0f]"><div className="max-w-sm text-center"><AppMark className="justify-center" /><h1 className="mt-8 font-display text-3xl font-semibold tracking-[-0.05em]">Your workspace awaits.</h1><p className="mt-3 text-sm leading-6 text-slate-500 dark:text-slate-400">Sign in to create and manage your published work.</p><Button onClick={() => isExternalRuntime ? setLocation("/auth/signin") : startLogin()} className="mt-7 rounded-full bg-violet-700 px-5 text-white hover:bg-violet-800">{isExternalRuntime ? "Continue with email" : "Continue with Manus"}</Button></div></div>;
 
   async function createPortfolio() { setCreating(true); try { await create.mutateAsync(); } finally { setCreating(false); } }
   const portfolios = list.data ?? [];

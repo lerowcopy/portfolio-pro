@@ -6,6 +6,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { startLogin } from "@/const";
+import { isExternalRuntime } from "@/lib/externalRuntime";
 
 const features = [
   { icon: LayoutPanelTop, title: "Four considered layouts", text: "Minimal, Gallery, Cards, and Blog — each calibrated for a different creative voice." },
@@ -30,7 +31,7 @@ export default function LandingPage() {
   const [, setLocation] = useLocation();
   const reduceMotion = useReducedMotion();
   const goToDashboard = () => setLocation("/dashboard");
-  const signIn = () => isAuthenticated ? goToDashboard() : startLogin();
+  const signIn = () => isAuthenticated ? goToDashboard() : isExternalRuntime ? setLocation("/auth/signin") : startLogin();
 
   return (
     <div className="min-h-svh overflow-hidden bg-[#fcfcfd] text-slate-950 selection:bg-violet-200 dark:bg-[#090a0f] dark:text-white">

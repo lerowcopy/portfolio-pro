@@ -1,14 +1,16 @@
 import { startLogin } from "@/const";
+import { isExternalRuntime } from "@/lib/externalRuntime";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { trpc } from "@/lib/trpc";
 import { TRPCClientError } from "@trpc/client";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type UseAuthOptions = {
   redirectOnUnauthenticated?: boolean;
   redirectPath?: string;
 };
 
-export function useAuth(options?: UseAuthOptions) {
+function useManusAuth(options?: UseAuthOptions) {
   // Login is started via startLogin() in the effect below, only when we actually
   // navigate — never during render. startLogin() mints a one-time nonce + writes
   // the state cookie, so calling it per render would overwrite the cookie and
@@ -95,4 +97,59 @@ export function useAuth(options?: UseAuthOptions) {
     refresh: () => meQuery.refetch(),
     logout,
   };
+}
+
+function useSupabaseAuth(options?: UseAuthOptions) {
+  const { redirectOnUnauthenticated = false, redirectPath } = options ?? {};
+  const [state, setState] = useState<{ user: { id: string; email: string | null; name: string } | null; loading: boolean; error: Error | null }>({
+    user: null,
+    loading: true,
+    error: null,
+  });
+
+  const refresh = useCallback(async () => {
+    try {
+      const { data, error } = await getSupabaseBrowserClient().auth.getUser();
+      if (error) throw error;
+      const displayName = data.user?.user_metadata.name ?? data.user?.user_metadata.full_name ?? data.user?.email ?? "Portfolio user";
+      setState({ user: data.user ? { id: data.user.id, email: data.user.email ?? null, name: typeof displayName === "string" ? displayName : "Portfolio user" } : null, loading: false, error: null });
+    } catch (error) {
+      setState({ user: null, loading: false, error: error instanceof Error ? error : new Error("Не удалось проверить сессию Supabase.") });
+    }
+  }, []);
+
+  useEffect(() => {
+    const client = getSupabaseBrowserClient();
+    void refresh();
+    const { data } = client.auth.onAuthStateChange((_event, session) => {
+      const displayName = session?.user.user_metadata.name ?? session?.user.user_metadata.full_name ?? session?.user.email ?? "Portfolio user";
+      setState({ user: session?.user ? { id: session.user.id, email: session.user.email ?? null, name: typeof displayName === "string" ? displayName : "Portfolio user" } : null, loading: false, error: null });
+    });
+    return () => data.subscription.unsubscribe();
+  }, [refresh]);
+
+  const logout = useCallback(async () => {
+    const { error } = await getSupabaseBrowserClient().auth.signOut();
+    if (error) throw error;
+    setState({ user: null, loading: false, error: null });
+  }, []);
+
+  useEffect(() => {
+    if (!redirectOnUnauthenticated || state.loading || state.user || typeof window === "undefined") return;
+    if (redirectPath && window.location.pathname === redirectPath) return;
+    window.location.href = redirectPath ?? "/auth/signin";
+  }, [redirectOnUnauthenticated, redirectPath, state.loading, state.user]);
+
+  return {
+    user: state.user,
+    loading: state.loading,
+    error: state.error,
+    isAuthenticated: Boolean(state.user),
+    refresh,
+    logout,
+  };
+}
+
+export function useAuth(options?: UseAuthOptions) {
+  return isExternalRuntime ? useSupabaseAuth(options) : useManusAuth(options);
 }

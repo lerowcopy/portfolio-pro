@@ -16,6 +16,8 @@ const mocks = vi.hoisted(() => ({
   uploadExternalImage: vi.fn(),
   createExternalSignedImageUrl: vi.fn(),
   parseOwnedExternalStoragePath: vi.fn(),
+  deleteExternalImage: vi.fn(),
+  recordExternalStorageCleanupFailure: vi.fn(),
 }));
 
 vi.mock("./portfolioRepository", () => ({
@@ -45,6 +47,11 @@ vi.mock("./supabaseStorage", () => ({
   uploadExternalImage: mocks.uploadExternalImage,
   createExternalSignedImageUrl: mocks.createExternalSignedImageUrl,
   parseOwnedExternalStoragePath: mocks.parseOwnedExternalStoragePath,
+  deleteExternalImage: mocks.deleteExternalImage,
+}));
+
+vi.mock("./storageCleanupAudit", () => ({
+  recordExternalStorageCleanupFailure: mocks.recordExternalStorageCleanupFailure,
 }));
 
 import { externalAppRouter } from "./externalRouter";
@@ -119,6 +126,8 @@ describe("external UUID router ownership boundary", () => {
     mocks.createExternalSignedImageUrl.mockImplementation((value: string) => Promise.resolve(value));
     mocks.uploadExternalImage.mockResolvedValue({ storagePath: `storage://portfolio-avatars/${userId}/a0b1c2d3-e4f5-6789-a0b1-c2d3e4f56789.png`, url: "https://signed.example/avatar" });
     mocks.parseOwnedExternalStoragePath.mockReturnValue({ bucket: "portfolio-avatars", objectPath: `${userId}/a0b1c2d3-e4f5-6789-a0b1-c2d3e4f56789.png` });
+    mocks.deleteExternalImage.mockResolvedValue(undefined);
+    mocks.recordExternalStorageCleanupFailure.mockResolvedValue(undefined);
   });
 
   it("returns current Supabase identity and requires it for protected procedures", async () => {
@@ -231,5 +240,34 @@ describe("external UUID router ownership boundary", () => {
       portfolioId,
       values: { ...projectInput, images: ["https://example.com/not-owned.webp"] },
     })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+  });
+
+  it("cleans up an old owned avatar only after a successful portfolio update", async () => {
+    const oldPath = `storage://portfolio-avatars/${userId}/11111111-1111-4111-8111-111111111111.png`;
+    const newPath = `storage://portfolio-avatars/${userId}/22222222-2222-4222-8222-222222222222.png`;
+    mocks.getExternalPortfolio.mockResolvedValue({ ...portfolioRow, avatar_path: oldPath });
+    mocks.poolQuery.mockResolvedValue({ rowCount: 1, rows: [{ ...portfolioRow, avatar_path: newPath }] });
+    const caller = externalAppRouter.createCaller(createContext());
+    await expect(caller.portfolios.update({ id: portfolioId, values: { ...defaultPortfolioInput, avatarUrl: newPath } })).resolves.toMatchObject({ id: portfolioId });
+    expect(mocks.deleteExternalImage).toHaveBeenCalledWith(oldPath, userId);
+  });
+
+  it("cleans up removed owned project media after a successful project delete", async () => {
+    const oldPath = `storage://portfolio-project-images/${userId}/33333333-3333-4333-8333-333333333333.webp`;
+    mocks.getExternalProject.mockResolvedValue({ ...projectRow, image_paths: [oldPath] });
+    mocks.poolQuery.mockResolvedValue({ rowCount: 1, rows: [] });
+    const caller = externalAppRouter.createCaller(createContext());
+    await expect(caller.projects.remove({ portfolioId, projectId })).resolves.toEqual({ success: true });
+    expect(mocks.deleteExternalImage).toHaveBeenCalledWith(oldPath, userId);
+  });
+
+  it("records a protected cleanup audit task when object deletion fails after a successful mutation", async () => {
+    const oldPath = `storage://portfolio-logos/${userId}/44444444-4444-4444-8444-444444444444.png`;
+    mocks.getExternalPortfolio.mockResolvedValue({ ...portfolioRow, logo_path: oldPath });
+    mocks.poolQuery.mockResolvedValue({ rowCount: 1, rows: [{ ...portfolioRow, logo_path: "" }] });
+    mocks.deleteExternalImage.mockRejectedValue(new Error("Storage provider unavailable"));
+    const caller = externalAppRouter.createCaller(createContext());
+    await expect(caller.portfolios.update({ id: portfolioId, values: { ...defaultPortfolioInput, logoUrl: "" } })).resolves.toMatchObject({ id: portfolioId });
+    expect(mocks.recordExternalStorageCleanupFailure).toHaveBeenCalledWith(userId, oldPath, expect.any(Error));
   });
 });
