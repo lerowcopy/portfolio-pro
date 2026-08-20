@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { PortfolioColorScheme } from "@shared/portfolio";
+import { isExternalRuntime } from "@/lib/externalRuntime";
 
 type PortfolioCardProps = {
   portfolio: { id: string | number; title: string; slug: string; bio: string; avatarUrl: string; colorScheme: PortfolioColorScheme; isPublished: boolean; updatedAt: Date | string };
@@ -43,7 +44,7 @@ export function PortfolioCard({ portfolio, onDelete }: PortfolioCardProps) {
           </DropdownMenu>
         </div>
         <div className="mt-4">
-          <Link href={`/dashboard/portfolios/${portfolio.id}/edit`} className="group/title inline-flex max-w-full items-center gap-1.5 rounded-md text-lg font-semibold tracking-[-0.03em] text-slate-950 outline-none transition-colors hover:text-violet-700 focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-white dark:hover:text-violet-300"><span className="truncate">{portfolio.title}</span><Edit3 className="size-3.5 opacity-0 transition-opacity group-hover/title:opacity-100" /></Link>
+          {isExternalRuntime ? <a href={`/dashboard/portfolios/${encodeURIComponent(String(portfolio.id))}/edit`} className="group/title inline-flex max-w-full items-center gap-1.5 rounded-md text-lg font-semibold tracking-[-0.03em] text-slate-950 outline-none transition-colors hover:text-violet-700 focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-white dark:hover:text-violet-300"><span className="truncate">{portfolio.title}</span><Edit3 className="size-3.5 opacity-0 transition-opacity group-hover/title:opacity-100" /></a> : <Link href={`/dashboard/portfolios/${portfolio.id}/edit`} className="group/title inline-flex max-w-full items-center gap-1.5 rounded-md text-lg font-semibold tracking-[-0.03em] text-slate-950 outline-none transition-colors hover:text-violet-700 focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-white dark:hover:text-violet-300"><span className="truncate">{portfolio.title}</span><Edit3 className="size-3.5 opacity-0 transition-opacity group-hover/title:opacity-100" /></Link>}
           <p className="mt-1 truncate text-sm text-slate-500 dark:text-slate-400">/{portfolio.slug}</p>
           <div className="mt-5 flex items-center justify-between"><p className="text-xs text-slate-400 dark:text-slate-500">Updated {date}</p>{portfolio.isPublished ? <a href={`/${portfolio.slug}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md text-xs font-semibold text-violet-700 transition-colors hover:text-violet-900 focus-visible:ring-2 focus-visible:ring-violet-500 dark:text-violet-300"><span>View</span><ArrowUpRight className="size-3.5" /></a> : <span className="text-xs font-medium text-slate-400">Private</span>}</div>
         </div>

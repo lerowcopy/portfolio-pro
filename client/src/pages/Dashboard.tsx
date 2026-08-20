@@ -30,7 +30,11 @@ export default function Dashboard() {
     try {
       const portfolio = await create.mutateAsync();
       const editorPath = portfolioEditorPath((portfolio as { id: string | number }).id);
-      await utils.portfolios.list.invalidate();
+      void utils.portfolios.list.invalidate();
+      if (isExternalRuntime) {
+        window.location.assign(editorPath);
+        return;
+      }
       setLocation(editorPath);
     } catch (error) {
       setCreateError(error instanceof Error ? error.message : "Не удалось открыть созданное портфолио.");
