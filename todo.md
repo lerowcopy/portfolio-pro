@@ -77,6 +77,8 @@
 - [ ] Fix production analytics placeholder request caused by unset VITE_ANALYTICS_ENDPOINT
 - [ ] Diagnose external portfolios.get editor request using the verified live UUID from portfolios.list
 - [ ] Fix premature external auth redirect while Supabase session hydration is still loading on editor deep-links
+- [ ] Diagnose and fix external editor template and color scheme selection persistence and preview updates
+- [x] Normalize external PostgreSQL template, color scheme and font family fields to client camelCase contract with router regression coverage
 - [x] Implement and verify external editor auth hydration guard with unit coverage and Vercel build
 - [x] Remove production analytics placeholders and verify no VITE analytics tokens remain in Vercel build
 - [x] Implement and verify external full-page UUID editor navigation for portfolio create and card open

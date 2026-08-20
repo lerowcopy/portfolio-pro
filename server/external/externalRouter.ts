@@ -1,7 +1,7 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { z } from "zod";
-import { portfolioInputSchema, projectInputSchema } from "../../shared/portfolio";
+import { portfolioColorSchemes, portfolioFontFamilies, portfolioInputSchema, portfolioTemplates, projectInputSchema } from "../../shared/portfolio";
 import type { ExternalTrpcContext } from "./externalContext";
 import { createUniqueExternalSlug, externalSlugify } from "./externalSlug";
 import { requireExternalPortfolioOwner, uuidSchema } from "./ownership";
@@ -50,6 +50,10 @@ function toDateValue(value: unknown): string {
 
 function toJsonArray(value: unknown): unknown[] {
   return Array.isArray(value) ? value : [];
+}
+
+function toAllowedValue<T extends readonly string[]>(value: unknown, allowed: T, fallback: T[number]): T[number] {
+  return typeof value === "string" && (allowed as readonly string[]).includes(value) ? value as T[number] : fallback;
 }
 
 function decodeBase64Image(value: string): Buffer {
@@ -109,6 +113,9 @@ async function toClientPortfolio(row: DatabaseRow, projects: Awaited<ReturnType<
     ...row,
     id: String(row.id),
     userId: String(row.user_id),
+    template: toAllowedValue(row.template, portfolioTemplates, "minimal"),
+    colorScheme: toAllowedValue(row.color_scheme, portfolioColorSchemes, "blue"),
+    fontFamily: toAllowedValue(row.font_family, portfolioFontFamilies, "inter"),
     logoUrl: await resolveExternalImage(row.logo_path, String(row.user_id)),
     avatarUrl: await resolveExternalImage(row.avatar_path, String(row.user_id)),
     logoStoragePath: typeof row.logo_path === "string" && row.logo_path.startsWith("storage://") ? row.logo_path : "",

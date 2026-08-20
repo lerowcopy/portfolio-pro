@@ -144,7 +144,13 @@ describe("external UUID router ownership boundary", () => {
     mocks.listExternalProjects.mockResolvedValue([projectRow]);
     const caller = externalAppRouter.createCaller(createContext());
 
-    await expect(caller.portfolios.list()).resolves.toMatchObject([{ id: portfolioId, projects: [{ id: projectId }] }]);
+    await expect(caller.portfolios.list()).resolves.toMatchObject([{
+      id: portfolioId,
+      template: "minimal",
+      colorScheme: "blue",
+      fontFamily: "inter",
+      projects: [{ id: projectId }],
+    }]);
     await expect(caller.projects.list({ portfolioId, page: 1, pageSize: 12, query: "mobile" })).resolves.toMatchObject({
       items: [{ id: projectId }],
       total: 1,
