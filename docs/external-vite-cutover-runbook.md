@@ -33,6 +33,8 @@ Railway uses `pnpm build:railway` and `pnpm start:railway` from the committed ma
 
 > External Supabase runtime requires **Node.js 22**. This is pinned by the committed `engines.node` range; Railway must build a new deployment after this change.
 
+> For the known Supabase Shared Session Pooler host only, the PostgreSQL helper keeps TLS enabled while applying a narrowly scoped compatibility setting for lean Railway trust stores. It does not change TLS behavior for any other PostgreSQL host and does not require changing Supabase's **Enforce SSL on incoming connections** setting.
+
 ## 3. Vercel SPA service
 
 Import the same repository into a separate Vercel project and choose the **Other** framework preset. The committed `vercel.json` runs `pnpm build:vercel:spa`, publishes `dist/public`, routes browser history paths to `index.html`, and keeps the filesystem function `api/trpc/[...path].ts` available before the SPA fallback.

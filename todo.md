@@ -78,6 +78,9 @@
 - [ ] Recover valid Railway Session Pooler URI formatting after database address validation failure
 - [ ] Correct Vercel VITE_SUPABASE_URL to the HTTPS Supabase project URL and redeploy browser bundle
 - [ ] Pin Railway external API builds to Node.js 22 to satisfy Supabase runtime requirements
+- [ ] Fix Railway PostgreSQL TLS certificate-chain handling for Supabase Session Pooler
+- [ ] Apply a scoped Node pg TLS compatibility setting for the configured Supabase Session Pooler only
+- [x] Apply and verify scoped Node pg TLS compatibility for the Supabase Session Pooler only
 - [x] Pin Railway external API builds to Node.js 22 and verify TypeScript plus Railway production build
 - [x] Verify live external Supabase sign-up route after configured Site URL and redirect URL
 - [ ] Guide and verify initial browser-only Railway and Vercel deployment for the external runtime

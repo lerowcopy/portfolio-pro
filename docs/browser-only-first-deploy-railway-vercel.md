@@ -97,6 +97,7 @@ Vercel app: https://….vercel.app
 |---|---|
 | Railway build failed | Откройте Deployments → View Logs; проверьте, что выбран `portfolio-pro`, а не старый `portfolio-pro-next`. |
 | Railway healthcheck failed | Убедитесь, что `SUPABASE_DATABASE_URL` — именно Session Pooler URI и что секреты добавлены в Railway Variables. Не задавайте `PORT`. |
+| `self-signed certificate in certificate chain` | Не меняйте Supabase SSL enforcement. Проект применяет scoped TLS compatibility только к Supabase Session Pooler; дождитесь Railway redeploy текущего commit. |
 | Vercel build failed | Проверьте Framework **Other**, Root Directory `./` и наличие `vercel.json` в корне репозитория. |
 | `/api/trpc` на Vercel returns 502 | Проверьте `RAILWAY_API_URL`: HTTPS, без trailing slash, Railway `/healthz` отвечает 200. Затем Redeploy Vercel. |
 | Sign up fails | Проверьте `VITE_EXTERNAL_RUNTIME=true`, оба Supabase VITE variables и Supabase Site/Redirect URL. Затем Redeploy Vercel. |
