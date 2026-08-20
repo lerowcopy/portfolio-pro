@@ -72,6 +72,8 @@
 - [x] Add Vercel Vite SPA fallback, same-origin Railway tRPC serverless proxy, environment contract and unit coverage
 - [x] Verify external build/security boundaries and update deployment documentation for Vercel, Railway, and Supabase
 - [ ] Complete live Vercel/Railway/Supabase acceptance from docs/external-vite-cutover-runbook.md, including a real Supabase session and cross-user authorization verification
+- [ ] Guide and verify initial browser-only Railway and Vercel deployment for the external runtime
+- [x] Provide a first-time browser-only Railway and Vercel account setup guide using the prepared Supabase project
 - [x] Add normalized portfolio_projects schema with title, description, images, URL, tags, dates, sort order, and portfolio ownership
 - [x] Add server-side project CRUD, image upload, and reorder procedures with ownership and file validation
 - [x] Add project list route with search, pagination, optimistic delete, and reorder controls

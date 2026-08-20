@@ -27,7 +27,6 @@ Create a Railway service from this repository. Use the committed configuration a
 | `SUPABASE_URL` | `https://<project-ref>.supabase.co` |
 | `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key used only for JWT identity verification. |
 | `SUPABASE_SECRET_KEY` | Supabase secret key; never expose it to browser code. |
-| `PUBLIC_APP_URL` | Future Vercel production URL. |
 | `PORT` | Omit; Railway provides it. |
 
 Railway uses `pnpm build:railway` and `pnpm start:railway` from the committed manifest. Before connecting Vercel, verify `https://<railway-domain>/healthz` returns `{"ok":true,"runtime":"external"}`.
