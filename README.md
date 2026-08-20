@@ -17,6 +17,8 @@ Portfolio Pro is a refined portfolio-builder application for creative profession
 
 The managed project environment injects OAuth, database, and S3 credentials automatically. Do not commit `.env` files or hardcode service credentials.
 
+This managed project cannot commit `.env` or `.env.example` files directly. Use [`docs/environment-template.md`](docs/environment-template.md) as the committed, copy-safe environment-template equivalent. It separates the current Manus runtime variables from the future Vercel/Supabase/FreeKassa configuration and contains placeholders only.
+
 ```bash
 pnpm install
 pnpm dev
