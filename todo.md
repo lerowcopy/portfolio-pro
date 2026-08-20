@@ -39,6 +39,13 @@
 - [x] Explain and document the Vercel deployment options for the current Vite/Express Portfolio Pro application
 - [x] Create a safe committed env-template equivalent and README reference for current and external deployment configuration without real secrets
 - [x] Evaluate the proposed Vercel/Railway/Supabase migration and document a safe replacement plan before code changes
+- [x] Extract a deployment-neutral Express app and Railway entrypoint without removing the current Manus runtime
+- [x] Design a separate Supabase PostgreSQL schema and migration plan with UUID user ownership
+- [ ] Apply the prepared Supabase PostgreSQL migration and execute RLS policy tests after a Supabase environment is connected
+- [ ] Replace Manus OAuth with Supabase Auth, update client token transport, and verify cross-user authorization
+- [ ] Replace Manus storage with Supabase Storage and protected upload policies
+- [ ] Add Vercel Vite SPA configuration, same-origin Railway API rewrites, and external environment contracts
+- [ ] Verify external build/security boundaries and update deployment documentation for Vercel, Railway, and Supabase
 - [x] Add normalized portfolio_projects schema with title, description, images, URL, tags, dates, sort order, and portfolio ownership
 - [x] Add server-side project CRUD, image upload, and reorder procedures with ownership and file validation
 - [x] Add project list route with search, pagination, optimistic delete, and reorder controls
