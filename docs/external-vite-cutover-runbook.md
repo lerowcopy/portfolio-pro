@@ -53,7 +53,7 @@ Execute this sequence in a browser against a Vercel Preview deployment first. Do
 1. Open `/auth/signup`, create a new email/password user, complete confirmation if enabled, then sign in.
 2. Open `/dashboard`, create a portfolio, edit title and bio, save, reload and confirm the data is retained.
 3. Upload an avatar and a project image. Confirm previews render but the saved database values are opaque `storage://...` paths, not a Manus path or a temporary signed URL.
-4. Replace the avatar, then delete the project. Confirm the dashboard still works and inspect `storage_cleanup_tasks`; it must remain empty for successful object deletes.
+4. Replace the avatar, clear a previously uploaded logo, remove one image from a multi-image project, then delete the project. Confirm the dashboard still works and inspect `storage_cleanup_tasks`; it must remain empty for successful object deletes.
 5. Publish the portfolio and load `/<slug>` in a private browser window. Confirm draft portfolios remain unavailable.
 6. Create a second test user. Confirm it cannot list, retrieve, edit, reorder or delete the first user’s portfolio or projects.
 7. Open `/api/trpc/system.health` through Vercel and confirm the response identifies `external` runtime. Verify a non-API deep link such as `/dashboard/portfolios/<uuid>/edit` refreshes without a 404.
@@ -61,6 +61,18 @@ Execute this sequence in a browser against a Vercel Preview deployment first. Do
 ## 5. Rollback rule
 
 If any acceptance step fails, set `VITE_EXTERNAL_RUNTIME=false` in the affected Vercel environment or remove the Preview deployment. Do not modify or delete Manus database/S3 data. The existing Manus runtime remains independent and can continue serving known-good workflows while the external issue is corrected.
+
+## 6. Storage cleanup recovery
+
+When a successful database mutation cannot delete an obsolete private object, Railway records a protected row in `public.storage_cleanup_tasks`. This is deliberate: the user-facing mutation remains committed while the failed object is retained for controlled recovery rather than silently discarded.
+
+Run the following **manual server-only** command in a Railway shell after resolving the upstream Storage issue. It retries up to 100 unresolved tasks, marks successful ones with `resolved_at`, and exits non-zero if any task still fails.
+
+```bash
+pnpm external:retry-storage-cleanup
+```
+
+To use a smaller controlled batch, set `STORAGE_CLEANUP_BATCH_SIZE` between `1` and `500`. Do not expose this command through browser UI or schedule it until an operational owner has approved the retry cadence.
 
 ## References
 

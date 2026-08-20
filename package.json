@@ -17,6 +17,7 @@
   "supabase:inspect": "node scripts/inspect-supabase-schema.mjs",
   "supabase:audit": "node scripts/audit-supabase-data.mjs",
   "supabase:verify": "node scripts/verify-supabase-schema.mjs",
+  "external:retry-storage-cleanup": "tsx scripts/retry-external-storage-cleanup.ts",
   "check": "tsc --noEmit",
     "format": "prettier --write .",
     "test": "vitest run",

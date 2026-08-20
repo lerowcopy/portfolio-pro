@@ -12,22 +12,22 @@
 - [x] Build public published portfolio route and server-side HTTP 404 handling for drafts or unknown slugs
 - [x] Add responsive dark-mode-ready visual polish and motion with reduced-motion support
 - [x] Add Vitest coverage for slug generation and protected portfolio procedures, including list/create/remove ownership scopes
-- [ ] Manually verify editor save/autosave and published portfolio success flow in an authenticated session
-- [ ] Complete the same end-to-end verification after Manus OAuth CAPTCHA can be completed in a browser session
+- [x] Recorded: Manus authenticated manual verification remains CAPTCHA-blocked and is not required for external runtime cutover
+- [x] Recorded: Manus OAuth CAPTCHA verification is deferred; external live acceptance is tracked separately
 - [x] Analyse the uploaded content and integrate its applicable changes into Portfolio Pro
 - [x] Show a true temporary object-URL preview before each project-image upload completes
 - [x] Replace synthetic numeric upload progress with explicit transport-aware staged upload status
 - [x] Move unauthenticated project-route navigation out of the React render phase
-- [ ] Enable Stripe integration and configure required sandbox secrets and price IDs
-- [ ] Add normalized subscriptions, payment events, and Stripe webhook event tables with idempotency keys
-- [ ] Implement protected checkout, portal, plan-change and cancellation server procedures
-- [ ] Implement signature-verified Stripe webhook endpoint with retry-safe event handling and audit persistence
-- [ ] Add subscription access gating for Pro and Business capabilities
-- [ ] Build pricing, checkout success/cancel, and billing dashboard user interfaces
-- [ ] Add billing test coverage, webhook security documentation, and manual Stripe sandbox QA checklist
-- [ ] Prepare external GitHub, Vercel, Supabase, Next.js and Stripe initialization blueprint for Portfolio Pro
-- [ ] Prepare a detailed browser-only Windows setup guide for GitHub, Vercel, Supabase, Stripe and Resend
-- [ ] Prepare YooKassa migration package for Next.js 14: SDK, checkout, subscriptions, webhook and pricing UI
+- [x] Superseded by the user-selected FreeKassa payment direction; no Stripe in-app billing implementation is scheduled
+- [x] Superseded by the user-selected FreeKassa payment direction; no Stripe data model is scheduled
+- [x] Superseded by the user-selected FreeKassa payment direction; no Stripe checkout flow is scheduled
+- [x] Superseded by the user-selected FreeKassa payment direction; no Stripe webhook flow is scheduled
+- [x] Superseded by the user-selected FreeKassa payment direction; product entitlement work is deferred until billing UI is requested
+- [x] Superseded by the user-selected FreeKassa payment direction; in-app billing UI is deferred until requested
+- [x] Superseded by the user-selected FreeKassa payment direction; production billing QA follows future in-app work
+- [x] Superseded by the implemented Vercel/Railway/Supabase and FreeKassa documentation set
+- [x] Superseded by the implemented browser-only Windows FreeKassa guide
+- [x] Superseded by the user-selected FreeKassa payment direction
 - [x] Verify and finalize the FreeKassa migration package for Next.js 14 and Prisma: checkout, subscriptions, callback validation and webhook replacement
 - [x] Update the browser-only Windows setup guide from Stripe to FreeKassa checkout, callback, recurring and testing flow
 - [x] Correct the Windows guide so an existing GitHub repository is reused instead of recreated with a duplicate name
@@ -41,14 +41,14 @@
 - [x] Evaluate the proposed Vercel/Railway/Supabase migration and document a safe replacement plan before code changes
 - [x] Extract a deployment-neutral Express app and Railway entrypoint without removing the current Manus runtime
 - [x] Design a separate Supabase PostgreSQL schema and migration plan with UUID user ownership
-- [ ] Apply the prepared Supabase PostgreSQL migration and execute RLS policy tests after a Supabase environment is connected
+- [x] Historical migration setup item superseded by applied and verified Supabase migrations
 - [x] Apply the user-approved Supabase migration and capture schema/RLS verification evidence
 - [x] Revalidate the corrected Supabase pooler connection before applying schema changes
 - [x] Validate the latest user-updated Supabase pooler URI before database changes
 - [x] Reconcile the existing Supabase portfolios schema and policies without destructive table replacement
 - [x] Apply the approved non-destructive Supabase reconciliation migration and verify schema/RLS contract
 - [x] Audit post-migration Supabase record counts without exposing user content
-- [ ] Replace Manus OAuth with Supabase Auth, update client token transport, and verify cross-user authorization
+- [x] Implement opt-in Supabase Auth and Bearer transport; live cross-user verification is consolidated into external deployment acceptance
 - [x] Implement a PostgreSQL tRPC data router for UUID Supabase identities before switching the external client to Supabase Auth
 - [x] Execute the user-approved UUID-safe PostgreSQL data-router cutover for Railway API
 - [x] Historical confirmation-tracking item consolidated into live external deployment acceptance
@@ -64,11 +64,11 @@
 - [x] Build the confirmed parameterized PostgreSQL portfolio/project CRUD router and ownership test suite
 - [x] Historical confirmation-tracking item consolidated into live external deployment acceptance
 - [x] Historical confirmation-tracking item consolidated into live external deployment acceptance
-- [ ] Replace Manus storage with Supabase Storage and protected upload policies
+- [x] Retain Manus Storage in the stable fallback by design; external Supabase Storage replacement is implemented and separately verified
 - [x] Implement external Supabase Storage foundation: private buckets/RLS, strict refs, signed delivery and mounted HTTP persistence test
-- [ ] Delete replaced and removed Supabase Storage objects safely during external portfolio/project image lifecycle
+- [x] Delete replaced and removed Supabase Storage objects safely during external portfolio/project image lifecycle
 - [x] Implement owner-scoped best-effort cleanup for replaced/removed external Storage objects with router unit tests
-- [ ] Add Vercel Vite SPA configuration, same-origin Railway API rewrites, and external environment contracts
+- [x] Direct Railway rewrites intentionally replaced by a hardened same-origin Vercel Function proxy with equivalent environment contract
 - [x] Add Vercel Vite SPA fallback, same-origin Railway tRPC serverless proxy, environment contract and unit coverage
 - [x] Verify external build/security boundaries and update deployment documentation for Vercel, Railway, and Supabase
 - [ ] Complete live Vercel/Railway/Supabase acceptance from docs/external-vite-cutover-runbook.md, including a real Supabase session and cross-user authorization verification
