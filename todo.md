@@ -73,6 +73,8 @@
 - [x] Verify external build/security boundaries and update deployment documentation for Vercel, Railway, and Supabase
 - [ ] Complete live Vercel/Railway/Supabase acceptance from docs/external-vite-cutover-runbook.md, including a real Supabase session and cross-user authorization verification
 - [ ] Diagnose and fix the live authenticated external portfolio list failure after successful Supabase sign-in
+- [ ] Diagnose and fix live external portfolio create redirect and UUID editor-route access
+- [x] Implement and verify UUID-safe client editor path creation with explicit redirect error handling
 - [ ] Correlate live portfolios.list 500 request trace with Railway application error details
 - [ ] Verify Railway SUPABASE_DATABASE_URL uses the current Supabase Session Pooler URI with a correctly encoded password
 - [ ] Recover valid Railway Session Pooler URI formatting after database address validation failure

@@ -6,8 +6,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import type { PortfolioColorScheme } from "@shared/portfolio";
 
 type PortfolioCardProps = {
-  portfolio: { id: number; title: string; slug: string; bio: string; avatarUrl: string; colorScheme: PortfolioColorScheme; isPublished: boolean; updatedAt: Date | string };
-  onDelete: (id: number) => void;
+  portfolio: { id: string | number; title: string; slug: string; bio: string; avatarUrl: string; colorScheme: PortfolioColorScheme; isPublished: boolean; updatedAt: Date | string };
+  onDelete: (id: string | number) => void;
 };
 
 const swatches: Record<PortfolioColorScheme, string> = {
