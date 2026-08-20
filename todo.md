@@ -38,6 +38,7 @@
 - [x] Document a correct explicit delivery flow from the Manus-linked portfolio-pro repository to GitHub and Vercel
 - [x] Explain and document the Vercel deployment options for the current Vite/Express Portfolio Pro application
 - [x] Create a safe committed env-template equivalent and README reference for current and external deployment configuration without real secrets
+- [x] Evaluate the proposed Vercel/Railway/Supabase migration and document a safe replacement plan before code changes
 - [x] Add normalized portfolio_projects schema with title, description, images, URL, tags, dates, sort order, and portfolio ownership
 - [x] Add server-side project CRUD, image upload, and reorder procedures with ownership and file validation
 - [x] Add project list route with search, pagination, optimistic delete, and reorder controls
