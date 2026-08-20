@@ -48,6 +48,11 @@ function toDateValue(value: unknown): string {
   return typeof value === "string" ? value.slice(0, 10) : "";
 }
 
+function toTimestampValue(value: unknown): Date | string {
+  if (value instanceof Date || typeof value === "string") return value;
+  return new Date(0);
+}
+
 function toJsonArray(value: unknown): unknown[] {
   return Array.isArray(value) ? value : [];
 }
@@ -113,6 +118,8 @@ async function toClientPortfolio(row: DatabaseRow, projects: Awaited<ReturnType<
     ...row,
     id: String(row.id),
     userId: String(row.user_id),
+    createdAt: toTimestampValue(row.created_at),
+    updatedAt: toTimestampValue(row.updated_at),
     template: toAllowedValue(row.template, portfolioTemplates, "minimal"),
     colorScheme: toAllowedValue(row.color_scheme, portfolioColorSchemes, "blue"),
     fontFamily: toAllowedValue(row.font_family, portfolioFontFamilies, "inter"),

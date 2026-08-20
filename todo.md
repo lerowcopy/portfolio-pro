@@ -78,6 +78,8 @@
 - [ ] Diagnose external portfolios.get editor request using the verified live UUID from portfolios.list
 - [ ] Fix premature external auth redirect while Supabase session hydration is still loading on editor deep-links
 - [ ] Diagnose and fix external editor template and color scheme selection persistence and preview updates
+- [ ] Fix external Dashboard Updated invalid date by normalizing PostgreSQL timestamps to camelCase client fields
+- [x] Normalize external createdAt/updatedAt response fields and verify Dashboard timestamp contract in router tests
 - [x] Normalize external PostgreSQL template, color scheme and font family fields to client camelCase contract with router regression coverage
 - [x] Implement and verify external editor auth hydration guard with unit coverage and Vercel build
 - [x] Remove production analytics placeholders and verify no VITE analytics tokens remain in Vercel build

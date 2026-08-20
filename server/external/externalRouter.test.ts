@@ -78,6 +78,8 @@ const portfolioRow = {
   slug: "product-designer",
   is_published: false,
   slug_manually_edited: false,
+  created_at: "2026-08-20T19:40:58.703Z",
+  updated_at: "2026-08-20T19:41:54.187Z",
 };
 
 const projectRow = {
@@ -146,6 +148,8 @@ describe("external UUID router ownership boundary", () => {
 
     await expect(caller.portfolios.list()).resolves.toMatchObject([{
       id: portfolioId,
+      createdAt: portfolioRow.created_at,
+      updatedAt: portfolioRow.updated_at,
       template: "minimal",
       colorScheme: "blue",
       fontFamily: "inter",
