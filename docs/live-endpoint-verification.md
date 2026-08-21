@@ -10,3 +10,16 @@
 После redeploy checkpoint `696e9582` 21 августа 2026 года Vercel landing page начала отображать новый текст **Always in control** и описание явного сохранения. В авторизованной Supabase-сессии Dashboard загрузил три portfolio cards с корректной датой `Updated Aug 20`, а редактор portfolio `a6ba5602-1112-44ec-a911-7b1d1802b8d1` открылся с выбранными значениями `Gallery`, `Purple`, `Inter` и соответствующим live preview.
 
 Live-проверка панели несохранённых изменений завершена с подтверждением пользователя. В поле названия portfolio было временно внесено значение `Belyakov Michail — проверка`. Live preview обновился мгновенно, без отправки формы; появилась нижняя панель **«Есть несохранённые изменения»** с действиями **«Отменить»** и **«Сохранить»**. После выбора **«Отменить»** исходное название `Belyakov Michail` и live preview были восстановлены, а панель исчезла. Изменение не было сохранено в опубликованные данные.
+
+Для проверки cross-user authorization создан временный QA-аккаунт с согласованным пользователем email. Supabase потребовал подтвердить адрес электронной почты; до подтверждения вход и независимая проверка запрета доступа к исходным portfolio невозможны.
+
+После подтверждения QA-аккаунт успешно вошёл в приложение. Его Dashboard оказался пустым и не содержал три portfolio исходного пользователя. Прямой переход по известному editor URL исходного portfolio `a6ba5602-1112-44ec-a911-7b1d1802b8d1` завершился нейтральным сообщением **This portfolio could not be found**, без раскрытия данных. Это подтверждает live read-level ownership isolation; parameterized write-path ownership checks дополнительно покрыты server unit tests.
+
+## Production environment verification without secret disclosure
+
+| Variable | Required non-secret format | Live evidence |
+| --- | --- | --- |
+| Railway `SUPABASE_DATABASE_URL` | `postgresql://postgres.<project-ref>:<URL-encoded-password>@aws-1-eu-west-3.pooler.supabase.com:5432/postgres`; password percent-encodes reserved URL characters such as `@`, `:`, `/`, `?`, `#`, `%` and `&`. | Railway `/healthz` returns `{"ok":true,"runtime":"external"}` and authenticated portfolio read routes complete successfully, proving the deployed API can establish the configured PostgreSQL connection. |
+| Vercel `VITE_SUPABASE_URL` | HTTPS project URL in the form `https://<project-ref>.supabase.co`; it must never be a PostgreSQL URI. | Live signup, email confirmation and two independent Supabase sign-ins completed from the published Vercel SPA. |
+
+The live tests above provide deployment evidence without committing connection strings, passwords or client keys.

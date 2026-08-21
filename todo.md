@@ -71,7 +71,7 @@
 - [x] Direct Railway rewrites intentionally replaced by a hardened same-origin Vercel Function proxy with equivalent environment contract
 - [x] Add Vercel Vite SPA fallback, same-origin Railway tRPC serverless proxy, environment contract and unit coverage
 - [x] Verify external build/security boundaries and update deployment documentation for Vercel, Railway, and Supabase
-- [ ] Complete live Vercel/Railway/Supabase acceptance from docs/external-vite-cutover-runbook.md, including a real Supabase session and cross-user authorization verification
+- [x] Complete live Vercel/Railway/Supabase acceptance from docs/external-vite-cutover-runbook.md, including a real Supabase session and cross-user authorization verification
 - [x] Diagnose and fix the live authenticated external portfolio list failure after successful Supabase sign-in
 - [x] Diagnose and fix live external portfolio create redirect and UUID editor-route access
 - [x] Fix production analytics placeholder request caused by unset VITE_ANALYTICS_ENDPOINT
