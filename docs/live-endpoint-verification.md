@@ -23,3 +23,7 @@ Live-проверка панели несохранённых изменений
 | Vercel `VITE_SUPABASE_URL` | HTTPS project URL in the form `https://<project-ref>.supabase.co`; it must never be a PostgreSQL URI. | Live signup, email confirmation and two independent Supabase sign-ins completed from the published Vercel SPA. |
 
 The live tests above provide deployment evidence without committing connection strings, passwords or client keys.
+
+## Vercel deployment metadata
+
+Read-only Vercel project inspection confirmed that project `portfolio-pro` is linked to GitHub repository `lerowcopy/portfolio-pro`. Its latest production deployment `dpl_CafAdY2ZDCdBc9ZB4ev8wicB1XYr` is in `READY` state, targets `production`, and was built from `main` commit `6ce7653a7c369c4baaa4ebdcee2d587e42149415`. This verifies that the published SPA contains the checked-in acceptance evidence and the latest live-tested implementation.
