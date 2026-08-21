@@ -90,9 +90,9 @@
 - [x] Implement and verify external full-page UUID editor navigation for portfolio create and card open
 - [x] Implement and verify UUID-safe client editor path creation with explicit redirect error handling
 - [x] Correlate live portfolios.list 500 request trace with Railway application error details
-- [ ] Verify Railway SUPABASE_DATABASE_URL uses the current Supabase Session Pooler URI with a correctly encoded password
-- [ ] Recover valid Railway Session Pooler URI formatting after database address validation failure
-- [ ] Correct Vercel VITE_SUPABASE_URL to the HTTPS Supabase project URL and redeploy browser bundle
+- [x] Verify Railway SUPABASE_DATABASE_URL uses the current Supabase Session Pooler URI with a correctly encoded password
+- [x] Recover valid Railway Session Pooler URI formatting after database address validation failure
+- [x] Correct Vercel VITE_SUPABASE_URL to the HTTPS Supabase project URL and redeploy browser bundle
 - [x] Pin Railway external API builds to Node.js 22 to satisfy Supabase runtime requirements
 - [x] Fix Railway PostgreSQL TLS certificate-chain handling for Supabase Session Pooler
 - [x] Apply a scoped Node pg TLS compatibility setting for the configured Supabase Session Pooler only

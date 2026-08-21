@@ -27,3 +27,5 @@ The live tests above provide deployment evidence without committing connection s
 ## Vercel deployment metadata
 
 Read-only Vercel project inspection confirmed that project `portfolio-pro` is linked to GitHub repository `lerowcopy/portfolio-pro`. Its latest production deployment `dpl_CafAdY2ZDCdBc9ZB4ev8wicB1XYr` is in `READY` state, targets `production`, and was built from `main` commit `6ce7653a7c369c4baaa4ebdcee2d587e42149415`. This verifies that the published SPA contains the checked-in acceptance evidence and the latest live-tested implementation.
+
+The project owner completed an in-dashboard verification without disclosing credentials: Railway `SUPABASE_DATABASE_URL` uses the required Session Pooler structure and password encoding, while Vercel Production `VITE_SUPABASE_URL` matches the HTTPS Supabase project URL. The current Vercel production deployment is Ready.
