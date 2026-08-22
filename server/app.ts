@@ -65,6 +65,13 @@ export async function createPortfolioApp(options: CreatePortfolioAppOptions): Pr
     registerOAuthRoutes(app);
   }
 
+  if (options.runtime === "external") {
+    const { handleFreeKassaWebhook } = await import("./external/freekassaWebhook");
+    app.post("/api/billing/freekassa/webhook", (request, response) => {
+      void handleFreeKassaWebhook(request, response);
+    });
+  }
+
   if (options.runtime === "manus") {
     const [{ createContext }, { appRouter }] = await Promise.all([
       import("./_core/context"),

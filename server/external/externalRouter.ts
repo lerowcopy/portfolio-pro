@@ -10,6 +10,7 @@ import { getExternalPortfolio, getExternalProject, getPublishedExternalPortfolio
 import { createPortfolioQuery, createProjectQuery, deletePortfolioQuery, deleteProjectQuery, updatePortfolioQuery, updateProjectQuery } from "./portfolioWrites";
 import { recordExternalStorageCleanupFailure } from "./storageCleanupAudit";
 import { createExternalSignedImageUrl, deleteExternalImage, parseOwnedExternalStoragePath, uploadExternalImage } from "./supabaseStorage";
+import { createFreeKassaCheckout } from "./freekassaCheckout";
 
 type DatabaseRow = Record<string, unknown>;
 
@@ -168,6 +169,20 @@ export const externalAppRouter = router({
   auth: router({
     me: publicProcedure.query(({ ctx }) => ctx.user),
     logout: publicProcedure.mutation(() => ({ success: true } as const)),
+  }),
+  billing: router({
+    createCheckout: protectedProcedure.input(z.object({ plan: z.enum(["starter", "pro", "business"]), locale: z.enum(["ru", "en"]).default("ru") })).mutation(async ({ ctx, input }) => {
+      try {
+        return await createFreeKassaCheckout({ userId: ctx.user.id, email: ctx.user.email ?? undefined, plan: input.plan, locale: input.locale });
+      } catch (error) {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: error instanceof Error && error.message.includes("not configured") ? "Оплата временно недоступна." : "Не удалось создать платёж." });
+      }
+    }),
+    me: protectedProcedure.query(async ({ ctx }) => {
+      const result = await getExternalPostgresPool().query("select plan, status, current_period_end from public.subscriptions where user_id = $1::uuid", [ctx.user.id]);
+      const row = result.rows[0] as { plan: string; status: string; current_period_end: Date | string } | undefined;
+      return row ? { plan: row.plan, status: row.status, currentPeriodEnd: row.current_period_end } : null;
+    }),
   }),
   portfolios: router({
     list: protectedProcedure.query(async ({ ctx }) => {

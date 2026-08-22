@@ -143,3 +143,7 @@
 - [x] Perform authenticated live RU/EN acceptance of the full editor form after Vercel redeploy
 - [x] Localize complete Portfolio Editor header, profile fields, public URL, visual controls, social links, publication, image upload, errors and actions for RU/EN
 - [x] Add regression source assertion for localized Portfolio Editor sections and actions
+- [x] Implement FreeKassa backend foundation: server-priced checkout URL, signed webhook, idempotent subscription activation and subscription persistence
+- [ ] Add billing router coverage, entitlement enforcement and pricing UI for FreeKassa plans
+- [ ] Apply FreeKassa billing migration in Supabase and complete Railway test-payment acceptance
+- [x] Document browser-only FreeKassa production setup, Railway/Vercel/Supabase variables and callback verification
