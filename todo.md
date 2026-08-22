@@ -146,4 +146,5 @@
 - [x] Implement FreeKassa backend foundation: server-priced checkout URL, signed webhook, idempotent subscription activation and subscription persistence
 - [ ] Add billing router coverage, entitlement enforcement and pricing UI for FreeKassa plans
 - [ ] Apply FreeKassa billing migration in Supabase and complete Railway test-payment acceptance
+- [x] Rewrite FreeKassa runbook for portfolio-pro.ru on Vercel and a non-conflicting Railway callback endpoint or API subdomain
 - [x] Document browser-only FreeKassa production setup, Railway/Vercel/Supabase variables and callback verification
