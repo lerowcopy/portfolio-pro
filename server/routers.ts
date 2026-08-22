@@ -85,6 +85,12 @@ export const appRouter = router({
       return { success: true } as const;
     }),
   }),
+  billing: router({
+    me: protectedProcedure.query(() => null as { plan: string; status: string; currentPeriodEnd: Date | string } | null),
+    createCheckout: protectedProcedure.input(z.object({ plan: z.enum(["starter", "pro", "business"]), locale: z.enum(["ru", "en"]).default("ru") })).mutation((): { orderId: string; checkoutUrl: string } => {
+      throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Оплата доступна только во внешнем runtime." });
+    }),
+  }),
   portfolios: router({
     list: protectedProcedure.query(async ({ ctx }) => {
       const db = await requireDatabase();

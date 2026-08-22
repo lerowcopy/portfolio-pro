@@ -13,6 +13,7 @@ import ProjectFormPage from "./pages/ProjectFormPage";
 import ProjectsPage from "./pages/ProjectsPage";
 import TemplateGallery from "./pages/TemplateGallery";
 import ExternalAuthPage from "./pages/ExternalAuthPage";
+import BillingPage from "./pages/BillingPage";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -22,6 +23,7 @@ function Router() {
       <Route path={"/auth/signin"}>{() => <ExternalAuthPage mode="signin" />}</Route>
       <Route path={"/auth/signup"}>{() => <ExternalAuthPage mode="signup" />}</Route>
       <Route path={"/dashboard"} component={Dashboard} />
+      <Route path={"/billing"} component={BillingPage} />
       <Route path={"/dashboard/portfolios/:id/edit"} component={PortfolioEditorPage} />
       <Route path={"/dashboard/portfolios/:id/projects/new"} component={ProjectFormPage} />
       <Route path={"/dashboard/portfolios/:id/projects/:projectId/edit"} component={ProjectFormPage} />

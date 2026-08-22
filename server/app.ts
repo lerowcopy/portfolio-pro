@@ -31,6 +31,7 @@ const PUBLIC_ROUTE_RESERVED = new Set([
   "favicon",
   "templates",
   "healthz",
+  "billing",
 ]);
 
 function isPublicSlugCandidate(slug: string): boolean {
@@ -40,6 +41,8 @@ function isPublicSlugCandidate(slug: string): boolean {
 function sendPublicNotFound(res: express.Response): void {
   res.status(404).type("html").send(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Portfolio not found — Portfolio Pro</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#090a0f;color:#fff;font-family:ui-sans-serif,system-ui,sans-serif}main{max-width:36rem;padding:2.5rem;text-align:center}p{color:#aeb5c7;line-height:1.65}a{display:inline-block;margin-top:1.4rem;border-radius:999px;background:#fff;padding:.75rem 1.1rem;color:#111;text-decoration:none;font-weight:700}</style></head><body><main><p style="color:#c4b5fd;font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase">404</p><h1 style="font-family:Georgia,serif;font-size:clamp(2.6rem,7vw,4.4rem);letter-spacing:-.06em;margin:.8rem 0">This page is private.</h1><p>It may have moved, or its maker has chosen not to publish it yet.</p><a href="/">Visit Portfolio Pro</a></main></body></html>`);
 }
+
+export const applicationInternals = { isPublicSlugCandidate };
 
 /**
  * Собирает Express application без запуска TCP listener.
