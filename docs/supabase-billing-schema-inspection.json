@@ -1,10 +1,176 @@
 {
   "tables": [
     {
+      "table_name": "billing_orders"
+    },
+    {
+      "table_name": "billing_webhook_events"
+    },
+    {
       "table_name": "subscriptions"
     }
   ],
   "columns": [
+    {
+      "table_name": "billing_orders",
+      "column_name": "id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "table_name": "billing_orders",
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "billing_orders",
+      "column_name": "plan",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "billing_orders",
+      "column_name": "status",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'pending'::text"
+    },
+    {
+      "table_name": "billing_orders",
+      "column_name": "expected_amount_kopeks",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "billing_orders",
+      "column_name": "currency",
+      "data_type": "character",
+      "udt_name": "bpchar",
+      "is_nullable": "NO",
+      "column_default": "'RUB'::bpchar"
+    },
+    {
+      "table_name": "billing_orders",
+      "column_name": "period_days",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "billing_orders",
+      "column_name": "freekassa_intid",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "billing_orders",
+      "column_name": "recurrent_order_id",
+      "data_type": "bigint",
+      "udt_name": "int8",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "billing_orders",
+      "column_name": "paid_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "billing_orders",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "timezone('utc'::text, now())"
+    },
+    {
+      "table_name": "billing_orders",
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "timezone('utc'::text, now())"
+    },
+    {
+      "table_name": "billing_webhook_events",
+      "column_name": "id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "table_name": "billing_webhook_events",
+      "column_name": "freekassa_intid",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "billing_webhook_events",
+      "column_name": "billing_order_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "billing_webhook_events",
+      "column_name": "merchant_id",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "billing_webhook_events",
+      "column_name": "amount_kopeks",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "billing_webhook_events",
+      "column_name": "currency_id",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "billing_webhook_events",
+      "column_name": "commission_kopeks",
+      "data_type": "integer",
+      "udt_name": "int4",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "billing_webhook_events",
+      "column_name": "received_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "timezone('utc'::text, now())"
+    },
     {
       "table_name": "subscriptions",
       "column_name": "id",
@@ -100,9 +266,89 @@
       "udt_name": "timestamptz",
       "is_nullable": "NO",
       "column_default": "now()"
+    },
+    {
+      "table_name": "subscriptions",
+      "column_name": "source_order_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "YES",
+      "column_default": null
     }
   ],
   "constraints": [
+    {
+      "table_name": "billing_orders",
+      "constraint_name": "billing_orders_currency_check",
+      "constraint_type": "c",
+      "definition": "CHECK ((currency = 'RUB'::bpchar))"
+    },
+    {
+      "table_name": "billing_orders",
+      "constraint_name": "billing_orders_expected_amount_kopeks_check",
+      "constraint_type": "c",
+      "definition": "CHECK ((expected_amount_kopeks > 0))"
+    },
+    {
+      "table_name": "billing_orders",
+      "constraint_name": "billing_orders_freekassa_intid_key",
+      "constraint_type": "u",
+      "definition": "UNIQUE (freekassa_intid)"
+    },
+    {
+      "table_name": "billing_orders",
+      "constraint_name": "billing_orders_period_days_check",
+      "constraint_type": "c",
+      "definition": "CHECK (((period_days >= 1) AND (period_days <= 366)))"
+    },
+    {
+      "table_name": "billing_orders",
+      "constraint_name": "billing_orders_pkey",
+      "constraint_type": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "billing_orders",
+      "constraint_name": "billing_orders_plan_check",
+      "constraint_type": "c",
+      "definition": "CHECK ((plan = ANY (ARRAY['starter'::text, 'pro'::text, 'business'::text])))"
+    },
+    {
+      "table_name": "billing_orders",
+      "constraint_name": "billing_orders_status_check",
+      "constraint_type": "c",
+      "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'paid'::text, 'cancelled'::text, 'refunded'::text, 'failed'::text])))"
+    },
+    {
+      "table_name": "billing_orders",
+      "constraint_name": "billing_orders_user_id_fkey",
+      "constraint_type": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "billing_webhook_events",
+      "constraint_name": "billing_webhook_events_amount_kopeks_check",
+      "constraint_type": "c",
+      "definition": "CHECK ((amount_kopeks > 0))"
+    },
+    {
+      "table_name": "billing_webhook_events",
+      "constraint_name": "billing_webhook_events_billing_order_id_fkey",
+      "constraint_type": "f",
+      "definition": "FOREIGN KEY (billing_order_id) REFERENCES billing_orders(id) ON DELETE RESTRICT"
+    },
+    {
+      "table_name": "billing_webhook_events",
+      "constraint_name": "billing_webhook_events_freekassa_intid_key",
+      "constraint_type": "u",
+      "definition": "UNIQUE (freekassa_intid)"
+    },
+    {
+      "table_name": "billing_webhook_events",
+      "constraint_name": "billing_webhook_events_pkey",
+      "constraint_type": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
     {
       "table_name": "subscriptions",
       "constraint_name": "subscriptions_fk_recurring_id_key",
@@ -120,6 +366,12 @@
       "constraint_name": "subscriptions_plan_check",
       "constraint_type": "c",
       "definition": "CHECK ((plan = ANY (ARRAY['starter'::text, 'pro'::text, 'business'::text])))"
+    },
+    {
+      "table_name": "subscriptions",
+      "constraint_name": "subscriptions_source_order_id_fkey",
+      "constraint_type": "f",
+      "definition": "FOREIGN KEY (source_order_id) REFERENCES billing_orders(id) ON DELETE RESTRICT"
     },
     {
       "table_name": "subscriptions",
@@ -142,6 +394,11 @@
   ],
   "policies": [
     {
+      "tablename": "billing_orders",
+      "policyname": "Billing orders are visible only to their owner",
+      "cmd": "SELECT"
+    },
+    {
       "tablename": "subscriptions",
       "policyname": "subscription own read",
       "cmd": "SELECT"
@@ -149,9 +406,24 @@
   ],
   "rls": [
     {
+      "table_name": "billing_orders",
+      "rls_enabled": true,
+      "rls_forced": false
+    },
+    {
+      "table_name": "billing_webhook_events",
+      "rls_enabled": true,
+      "rls_forced": false
+    },
+    {
       "table_name": "subscriptions",
       "rls_enabled": true,
       "rls_forced": false
     }
-  ]
+  ],
+  "counts": {
+    "billing_orders": "0",
+    "billing_webhook_events": "0",
+    "subscriptions": "0"
+  }
 }

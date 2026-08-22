@@ -117,7 +117,15 @@ FREEKASSA_ENFORCE_IP_ALLOWLIST=false
 
 ## Что делать после настройки domain
 
-Сначала примените reconciliation migration `supabase/migrations/20260822000600_reconcile_freekassa_billing.sql` в Supabase SQL Editor. Она рассчитана на уже существующую у вас `subscriptions` table и не пересоздаёт её. Затем добавьте Railway variables, redeploy API, включите test mode FreeKassa и проведите test payment. Успешный signed Result URL должен вернуть `YES`, пометить order как `paid` и создать/обновить row `subscriptions`. Return URL браузера сам по себе доступ не выдаёт.
+Reconciliation migration `supabase/migrations/20260822000600_reconcile_freekassa_billing.sql` применена и проверена: `billing_orders`, `billing_webhook_events`, `subscriptions.source_order_id`, foreign keys, unique `freekassa_intid` и RLS находятся на месте. Следующий шаг — добавить Railway variables, redeploy API, включить test mode FreeKassa и провести test payment. Успешный signed Result URL должен вернуть `YES`, пометить order как `paid` и создать/обновить row `subscriptions`. Return URL браузера сам по себе доступ не выдаёт.
+
+### Последняя проверка Railway
+
+После redeploy Railway `GET https://portfolio-pro-production-113c.up.railway.app/healthz` вернул `{"ok":true,"runtime":"external"}`. Открытие callback URL через **GET** вернуло ожидаемый `404`, потому что callback намеренно зарегистрирован только как `POST /api/billing/freekassa/webhook`; это не означает ошибку маршрута. Следующая проверка — signed test callback через FreeKassa test mode.
+
+Проверка отрицательного сценария проведена: POST с заведомо недействительными merchant, amount, order ID и signature вернул `400 INVALID`. Поэтому endpoint доступен и не принимает неподписанные уведомления; запись order или subscription при этом не создавалась.
+
+Read-only aggregate audit после этой проверки подтвердил: `billing_orders = 0`, `billing_webhook_events = 0`, `subscriptions = 0`. Тест не оставил платёжных или пользовательских данных.
 
 ## References
 

@@ -148,7 +148,9 @@
 - [x] Add pricing UI for FreeKassa plans with server-side checkout start and Dashboard navigation
 - [x] Reserve billing routes from public slug middleware and verify the pricing page renders in external runtime
 - [ ] Add regression coverage for reserved billing routes and verify `/billing` on deployed external Vercel/Railway runtime after redeploy
-- [ ] Apply FreeKassa billing migration in Supabase and complete Railway test-payment acceptance
+- [x] Apply and verify non-destructive FreeKassa billing reconciliation migration in Supabase
+- [ ] Configure Railway FreeKassa variables, redeploy API and complete test-payment acceptance
+- [x] Verify published FreeKassa callback rejects an unsigned invalid notification without creating payment data
 - [x] Inspect existing Supabase subscriptions schema and reconcile FreeKassa billing tables without destructive replacement
 - [x] Rewrite FreeKassa runbook for portfolio-pro.ru on Vercel and a non-conflicting Railway callback endpoint or API subdomain
 - [x] Document browser-only FreeKassa production setup, Railway/Vercel/Supabase variables and callback verification
