@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import pg from "pg";
+import { getExternalPostgresPoolConfig } from "./external/postgres";
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
@@ -22,7 +23,7 @@ describe("Supabase server configuration", () => {
   it("connects to the configured PostgreSQL pooler without exposing the connection string", async () => {
     expect(supabaseDatabaseUrl, "SUPABASE_DATABASE_URL must be configured").toBeTruthy();
 
-    const client = new pg.Client({ connectionString: supabaseDatabaseUrl });
+    const client = new pg.Client(getExternalPostgresPoolConfig({ SUPABASE_DATABASE_URL: supabaseDatabaseUrl }));
     try {
       await client.connect();
       const result = await client.query("select 1 as connected");

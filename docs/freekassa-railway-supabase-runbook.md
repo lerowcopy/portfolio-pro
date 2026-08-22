@@ -117,7 +117,7 @@ FREEKASSA_ENFORCE_IP_ALLOWLIST=false
 
 ## Что делать после настройки domain
 
-Сначала примените migration `supabase/migrations/20260822000500_add_freekassa_billing.sql` в Supabase SQL Editor. Затем добавьте Railway variables, redeploy API, включите test mode FreeKassa и проведите test payment. Успешный signed Result URL должен вернуть `YES`, пометить order как `paid` и создать/обновить row `subscriptions`. Return URL браузера сам по себе доступ не выдаёт.
+Сначала примените reconciliation migration `supabase/migrations/20260822000600_reconcile_freekassa_billing.sql` в Supabase SQL Editor. Она рассчитана на уже существующую у вас `subscriptions` table и не пересоздаёт её. Затем добавьте Railway variables, redeploy API, включите test mode FreeKassa и проведите test payment. Успешный signed Result URL должен вернуть `YES`, пометить order как `paid` и создать/обновить row `subscriptions`. Return URL браузера сам по себе доступ не выдаёт.
 
 ## References
 

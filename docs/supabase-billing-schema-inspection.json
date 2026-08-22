@@ -1,0 +1,157 @@
+{
+  "tables": [
+    {
+      "table_name": "subscriptions"
+    }
+  ],
+  "columns": [
+    {
+      "table_name": "subscriptions",
+      "column_name": "id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": "gen_random_uuid()"
+    },
+    {
+      "table_name": "subscriptions",
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "udt_name": "uuid",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "subscriptions",
+      "column_name": "plan",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "table_name": "subscriptions",
+      "column_name": "status",
+      "data_type": "text",
+      "udt_name": "text",
+      "is_nullable": "NO",
+      "column_default": "'pending'::text"
+    },
+    {
+      "table_name": "subscriptions",
+      "column_name": "fk_recurring_id",
+      "data_type": "bigint",
+      "udt_name": "int8",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "subscriptions",
+      "column_name": "payer_ip",
+      "data_type": "inet",
+      "udt_name": "inet",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "subscriptions",
+      "column_name": "current_period_start",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "subscriptions",
+      "column_name": "current_period_end",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "subscriptions",
+      "column_name": "next_payment_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "table_name": "subscriptions",
+      "column_name": "cancel_at_period_end",
+      "data_type": "boolean",
+      "udt_name": "bool",
+      "is_nullable": "NO",
+      "column_default": "false"
+    },
+    {
+      "table_name": "subscriptions",
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    },
+    {
+      "table_name": "subscriptions",
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "udt_name": "timestamptz",
+      "is_nullable": "NO",
+      "column_default": "now()"
+    }
+  ],
+  "constraints": [
+    {
+      "table_name": "subscriptions",
+      "constraint_name": "subscriptions_fk_recurring_id_key",
+      "constraint_type": "u",
+      "definition": "UNIQUE (fk_recurring_id)"
+    },
+    {
+      "table_name": "subscriptions",
+      "constraint_name": "subscriptions_pkey",
+      "constraint_type": "p",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "subscriptions",
+      "constraint_name": "subscriptions_plan_check",
+      "constraint_type": "c",
+      "definition": "CHECK ((plan = ANY (ARRAY['starter'::text, 'pro'::text, 'business'::text])))"
+    },
+    {
+      "table_name": "subscriptions",
+      "constraint_name": "subscriptions_status_check",
+      "constraint_type": "c",
+      "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'active'::text, 'past_due'::text, 'canceled'::text, 'expired'::text])))"
+    },
+    {
+      "table_name": "subscriptions",
+      "constraint_name": "subscriptions_user_id_fkey",
+      "constraint_type": "f",
+      "definition": "FOREIGN KEY (user_id) REFERENCES profiles(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "subscriptions",
+      "constraint_name": "subscriptions_user_id_key",
+      "constraint_type": "u",
+      "definition": "UNIQUE (user_id)"
+    }
+  ],
+  "policies": [
+    {
+      "tablename": "subscriptions",
+      "policyname": "subscription own read",
+      "cmd": "SELECT"
+    }
+  ],
+  "rls": [
+    {
+      "table_name": "subscriptions",
+      "rls_enabled": true,
+      "rls_forced": false
+    }
+  ]
+}
