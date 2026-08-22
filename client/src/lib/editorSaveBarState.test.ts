@@ -31,6 +31,13 @@ describe("getEditorSaveBarState", () => {
     });
   });
 
+  it("returns English panel copy for the English interface", () => {
+    expect(getEditorSaveBarState("dirty", undefined, "en")).toMatchObject({
+      title: "You have unsaved changes",
+      detail: "Live preview is already updated. Save when you are ready.",
+    });
+  });
+
   it("keeps saved image paths independent from later draft mutations", () => {
     const saved = cloneEditorStoragePaths({ logo: "storage://logos/saved", avatar: "storage://avatars/saved" });
     const draft = cloneEditorStoragePaths(saved);

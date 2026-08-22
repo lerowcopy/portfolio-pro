@@ -135,3 +135,6 @@
 - [x] Document local setup and environment requirements
 - [x] Add Vitest coverage proving protected portfolio procedures reject cross-user access
 - [x] Run final server typecheck and verify protected portfolio procedures after migration
+- [x] Add a persistent Russian and English language switcher across public, authentication, dashboard, and editor preview flows
+- [x] Localize Landing demo content, auth, Dashboard cards, editor save status and shared public-template actions; verify RU/EN switching
+- [x] Verify locale persistence resolution, English editor status copy, TypeScript, Vercel SPA build and RU landing rendering
