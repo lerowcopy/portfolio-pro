@@ -1,3 +1,4 @@
+import React from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { AlertCircle, CheckCircle2, Loader2, RotateCcw, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";

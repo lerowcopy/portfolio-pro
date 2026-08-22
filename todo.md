@@ -138,3 +138,8 @@
 - [x] Add a persistent Russian and English language switcher across public, authentication, dashboard, and editor preview flows
 - [x] Localize Landing demo content, auth, Dashboard cards, editor save status and shared public-template actions; verify RU/EN switching
 - [x] Verify locale persistence resolution, English editor status copy, TypeScript, Vercel SPA build and RU landing rendering
+- [x] Implement a locale-aware Portfolio Editor validation source and audit fixed option labels
+- [x] Add rendered RU/EN save-bar test plus validation and option-label regression coverage for editor localization
+- [ ] Perform authenticated live RU/EN acceptance of the full editor form after Vercel redeploy
+- [x] Localize complete Portfolio Editor header, profile fields, public URL, visual controls, social links, publication, image upload, errors and actions for RU/EN
+- [x] Add regression source assertion for localized Portfolio Editor sections and actions
